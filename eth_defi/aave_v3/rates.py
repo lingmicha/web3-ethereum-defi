@@ -2,7 +2,7 @@
 import logging
 from datetime import datetime
 from decimal import Decimal
-from typing import NamedTuple, Tuple
+from typing import NamedTuple, Tuple, Union
 
 from pandas import DataFrame, Timedelta
 
@@ -86,7 +86,7 @@ def aave_v3_filter_by_token(df: DataFrame, token: str = '') -> DataFrame:
         return df.loc[df['token'] == token]
 
 
-def aave_v3_calculate_ohlc(df: DataFrame, time_bucket: Timedelta, attribute: str | Tuple, token: str = '') -> DataFrame | Tuple:
+def aave_v3_calculate_ohlc(df: DataFrame, time_bucket: Timedelta, attribute: Union[str , Tuple], token: str = '') -> Union[DataFrame , Tuple]:
     """
     Calculate OHLC (Open, High, Low, Close) values for a given time bucket (e.g. 1 day) and given attribute.
     Attribute can be e.g. deposit_apr, variable_borrow_apr, stable_borrow_apr, deposit_apy, variable_borrow_apy, stable_borrow_apy.
@@ -102,7 +102,7 @@ def aave_v3_calculate_ohlc(df: DataFrame, time_bucket: Timedelta, attribute: str
         return (df[attr].resample(time_bucket).ohlc(_method='ohlc') for attr in attribute)
 
 
-def aave_v3_calculate_mean(df: DataFrame, time_bucket: Timedelta, attribute: str | Tuple, token: str = '') -> DataFrame | Tuple:
+def aave_v3_calculate_mean(df: DataFrame, time_bucket: Timedelta, attribute: Union[str , Tuple], token: str = '') -> Union[DataFrame , Tuple]:
     """
     Calculate mean values for a given time bucket (e.g. 1 day) and given attribute.
     Attribute can be e.g. deposit_apr, variable_borrow_apr, stable_borrow_apr, deposit_apy, variable_borrow_apy, stable_borrow_apy.
@@ -130,7 +130,7 @@ def aave_v3_filter_by_date_range(df: DataFrame, start_time: datetime, end_time: 
         return aave_v3_filter_by_token(df, token).query('timestamp >= @start_time')
 
 
-def _calculate_compound_interest_multiplier(rate: Decimal, seconds: Decimal | float) -> Decimal:
+def _calculate_compound_interest_multiplier(rate: Decimal, seconds: Union[Decimal , float]) -> Decimal:
     """
     Calculate compound interest for a given rate and seconds between borrow and payback.
     Based on https://github.com/aave/aave-v3-core/blob/v1.16.2/contracts/protocol/libraries/math/MathUtils.sol#L51

@@ -163,7 +163,7 @@ AAVE_V3_DEPOSIT_ADDRESS_TOKENS: dict[str, str] = {}  # autofill later
 # }
 
 
-def aave_v3_get_json_rpc_url() -> str | None:
+def aave_v3_get_json_rpc_url() -> Optional[str]:
     # Allow configuring the JSON-RPC URL via aave.json in current directory
     # If not present, user will be asked to input the URL
     if os.path.exists("./aave.json"):
@@ -171,7 +171,7 @@ def aave_v3_get_json_rpc_url() -> str | None:
         return aave_config["json_rpc_url"]
 
 
-def aave_v3_get_account_address() -> str | None:
+def aave_v3_get_account_address() -> Optional[str]:
     # Allow configuring an account address via aave.json in current directory
     # If not present, user will be asked to input the account
     if os.path.exists("./aave.json"):
@@ -188,7 +188,7 @@ def aave_v3_get_network_by_chain_id(chain_id: int) -> AaveNetwork:
     return aave_network
 
 
-def aave_v3_get_token_name_by_deposit_address(deposit_address: str) -> str | None:
+def aave_v3_get_token_name_by_deposit_address(deposit_address: str) -> Optional[str]:
     # Get a token name by the AToken deposit contract address
     return AAVE_V3_DEPOSIT_ADDRESS_TOKENS.get(deposit_address, None)
 
