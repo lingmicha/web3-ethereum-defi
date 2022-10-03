@@ -12,6 +12,7 @@ dist
 !.vscode/settings.json
 .idea
 .python-version
+.hypothesis
 
 # docs
 docs/build
