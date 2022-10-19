@@ -52,5 +52,7 @@ jobs:
         run: make copy-sushi-abi
       - name: Copy uniswap v3
         run: make copy-uniswapv3-abi
+      - name: Copy Aave
+        run: make aavev3
       - name: Copy venus
         run: make copy-venus-abi

@@ -9,7 +9,7 @@
 	url = https://github.com/Uniswap/v3-periphery.git
 [submodule "contracts/compound-protocol"]
 	path = contracts/compound-protocol
-	url = git@github.com:compound-finance/compound-protocol.git
+	url = https://github.com/compound-finance/compound-protocol.git
 [submodule "contracts/venus-protocol"]
 	path = contracts/venus-protocol
-	url = git@github.com:VenusProtocol/venus-protocol.git
+	url = https://github.com/VenusProtocol/venus-protocol.git
