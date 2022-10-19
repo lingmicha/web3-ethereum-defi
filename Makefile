@@ -39,7 +39,7 @@ venus:
 	@(cd contracts/venus-protocol && yarn install --lock-file && yarn compile) > /dev/null
 
 # Extract ABI and copied over to our abi/venues/ folder
-copy-venus-abi: venues
+copy-venus-abi: venus
 	@find contracts/venus-protocol/artifacts/contracts -iname "*.json" -not -iname "*.dbg.json" -exec cp {} eth_defi/abi/venues \;
 
 
