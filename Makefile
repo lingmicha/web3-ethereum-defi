@@ -35,11 +35,11 @@ aavev3:
 #	@find contracts/compound-protocol/abi/ -iname "*.json" -not -iname "*.dbg.json" -exec cp {} eth_defi/abi/compound_v2 \;
 
 # Compile all of Venues files
-venues:
+venus:
 	@(cd contracts/venus-protocol && yarn install --lock-file && yarn compile) > /dev/null
 
 # Extract ABI and copied over to our abi/venues/ folder
-copy-venues-abi: venues
+copy-venus-abi: venues
 	@find contracts/venus-protocol/artifacts/contracts -iname "*.json" -not -iname "*.dbg.json" -exec cp {} eth_defi/abi/venues \;
 
 
