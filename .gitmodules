@@ -7,9 +7,9 @@
 [submodule "uniswap-v3-periphery"]
 	path = contracts/uniswap-v3-periphery
 	url = https://github.com/Uniswap/v3-periphery.git
-[submodule "contracts/compound-protocol"]
+[submodule "compound-protocol"]
 	path = contracts/compound-protocol
 	url = https://github.com/compound-finance/compound-protocol.git
-[submodule "contracts/venus-protocol"]
+[submodule "venus-protocol"]
 	path = contracts/venus-protocol
 	url = https://github.com/VenusProtocol/venus-protocol.git
