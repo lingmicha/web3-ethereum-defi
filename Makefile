@@ -27,11 +27,11 @@ aavev3:
 	@find eth_defi/abi/aave_v3 -iname "*.json" -exec sed -e 's/\$$__\|__\$$//g' -i {} \;
 
 # Copy Compound V2 contract ABIs from their NPM package, remove library placeholders (__$ $__)
-#compoundv2:
+compoundv2:
 #	#@export SADDLE_CONTRACTS="contracts/*.sol"
-#	#@(cd contracts/compound-protocol && npm install && npm run compile)
+	@(cd contracts/compound-protocol && npm install && npm run compile)
 #	@(export SADDLE_CONTRACTS="contracts/*.sol" && cd contracts/compound-protocol && npm run compile)
-#	@mkdir -p eth_defi/abi/compound_v2
+	@mkdir -p eth_defi/abi/compound_v2
 #	@find contracts/compound-protocol/abi/ -iname "*.json" -not -iname "*.dbg.json" -exec cp {} eth_defi/abi/compound_v2 \;
 
 # Compile all of Venues files
@@ -40,15 +40,16 @@ venus:
 
 # Extract ABI and copied over to our abi/venues/ folder
 copy-venus-abi: venus
-	@find contracts/venus-protocol/artifacts/contracts -iname "*.json" -not -iname "*.dbg.json" -exec cp {} eth_defi/abi/venues \;
-
+	@mkdir -p eth_defi/abi/venus
+	@find contracts/venus-protocol/artifacts/contracts -iname "*.json" -not -iname "*.dbg.json" -exec cp {} eth_defi/abi/venus \;
+#	@find eth_defi/abi/venus -iname "*.json" -exec sed -e 's/\$$__\|__\$$//g' -i {} \;
 
 clean:
 	@rm -rf contracts/sushiswap/artifacts/*
 	@rm -rf contracts/uniswap-v3-core/artifacts/*
 	@rm -rf contracts/uniswap-v3-periphery/artifacts/*
 
-all: clean-docs copy-sushi-abi copy-uniswapv3-abi aavev3 copy-venues-abi build-docs
+all: clean-docs copy-sushi-abi copy-uniswapv3-abi aavev3 compoundv2 copy-venus-abi build-docs
 
 # Export the dependencies, so that Read the docs can build our API docs
 # See: https://github.com/readthedocs/readthedocs.org/issues/4912
