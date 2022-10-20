@@ -26,7 +26,7 @@ pytestmark = pytest.mark.skipif(
 
 
 @pytest.fixture(scope="module")
-def holder() -> HexAddress:
+def aDai_holder() -> HexAddress:
     """A random account picked from polygon that holds a lot of aDAI token.
 
     This account is unlocked on Ganache, so you have access to good aDAI stash.
@@ -38,13 +38,13 @@ def holder() -> HexAddress:
 
 
 @pytest.fixture(scope="module")
-def ganache_polygon_chain_fork(holder) -> str:
+def ganache_polygon_chain_fork(aDai_holder) -> str:
     """Create a testable fork of live Polygon chain.
 
     :return: JSON-RPC URL for Web3
     """
     mainnet_rpc = os.environ["POLYGON_CHAIN_JSON_RPC"]
-    launch = fork_network(mainnet_rpc, unlocked_addresses=[holder])
+    launch = fork_network(mainnet_rpc + "@34571963", unlocked_addresses=[aDai_holder])
     yield launch.json_rpc_url
     # Wind down Ganache process after the test is complete
     launch.close()
@@ -109,14 +109,13 @@ def seller(web3: Web3) -> HexAddress:
 #
 
 
-def test_get_deposit_balance(web3: Web3, holder: HexAddress):
+def test_get_deposit_balance(web3: Web3, aDai_holder: HexAddress):
 
     # polygon aDAI: 0x82E64f49Ed5EC1bC6e43DAD4FC8Af9bb3A2312EE
-
     aDai = HexAddress(HexStr("0x82E64f49Ed5EC1bC6e43DAD4FC8Af9bb3A2312EE"))
-    balance = aave_v3_get_deposit_balance(web3, aDai, holder)
+    balance = aave_v3_get_deposit_balance(web3, aDai, aDai_holder)
     print("balance:", balance)
-    assert balance > 0, "Not enough BUSD to perform the test"
+    assert balance > 0, "账户中aDai应大于0"
 
 
 
