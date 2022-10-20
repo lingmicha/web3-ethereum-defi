@@ -44,7 +44,7 @@ def ganache_polygon_chain_fork(aDai_holder) -> str:
     :return: JSON-RPC URL for Web3
     """
     mainnet_rpc = os.environ["POLYGON_CHAIN_JSON_RPC"]
-    launch = fork_network(mainnet_rpc + "@34571963", unlocked_addresses=[aDai_holder])
+    launch = fork_network(mainnet_rpc, unlocked_addresses=[aDai_holder]) #"@34571963"
     yield launch.json_rpc_url
     # Wind down Ganache process after the test is complete
     launch.close()
