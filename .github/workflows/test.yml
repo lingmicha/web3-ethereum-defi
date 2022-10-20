@@ -56,3 +56,5 @@ jobs:
         run: make aavev3
       - name: Copy venus
         run: make copy-venus-abi
+      - name: Cook Compound
+        run: make compoundv2
