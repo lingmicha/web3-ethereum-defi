@@ -1,7 +1,7 @@
 """Aave v3 constants."""
 import json
 import os
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 # Sources:
 # https://docs.aave.com/developers/deployed-contracts/v3-mainnet/polygon
@@ -196,7 +196,7 @@ def aave_v3_get_token_name_by_deposit_address(deposit_address: str) -> Optional[
 def _autofill_token_addresses():
     for network in AAVE_V3_NETWORKS.values():
         for token_name, token in network.token_contracts.items():
-            AAVE_V3_DEPOSIT_ADDRESS_TOKENS[token.token_address] = token_name
+            AAVE_V3_DEPOSIT_ADDRESS_TOKENS[token.deposit_address] = token_name
 
 
 # Initialization
