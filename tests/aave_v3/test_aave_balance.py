@@ -113,7 +113,7 @@ def test_get_deposit_balance(web3: Web3, holder: HexAddress):
 
     # polygon aDAI: 0x82E64f49Ed5EC1bC6e43DAD4FC8Af9bb3A2312EE
 
-    aDai = "0x82E64f49Ed5EC1bC6e43DAD4FC8Af9bb3A2312EE"
+    aDai = HexAddress(HexStr("0x82E64f49Ed5EC1bC6e43DAD4FC8Af9bb3A2312EE"))
     balance = aave_v3_get_deposit_balance(web3, aDai, holder)
     print("balance:", balance)
     assert balance > 0, "Not enough BUSD to perform the test"
