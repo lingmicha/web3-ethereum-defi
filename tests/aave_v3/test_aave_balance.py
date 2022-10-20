@@ -15,6 +15,7 @@ import pytest
 from eth_typing import HexAddress, HexStr
 from web3 import HTTPProvider, Web3
 
+from eth_defi.ganache import fork_network
 from eth_defi.aave_v3.balances import aave_v3_get_deposit_balance, aave_v3_get_variable_borrow_balance
 
 # https://docs.pytest.org/en/latest/how-to/skipping.html#skip-all-test-functions-of-a-class-or-module
