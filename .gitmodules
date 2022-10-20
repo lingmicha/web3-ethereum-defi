@@ -13,3 +13,4 @@
 [submodule "compound-v2"]
 	path = contracts/compound-protocol
 	url = https://github.com/compound-finance/compound-protocol.git
+	branch = compound/2.8
