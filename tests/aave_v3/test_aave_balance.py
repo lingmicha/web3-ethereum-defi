@@ -57,58 +57,6 @@ def web3(ganache_polygon_chain_fork: str):
     return Web3(HTTPProvider(ganache_polygon_chain_fork))
 
 
-@pytest.fixture
-def seller(web3: Web3) -> HexAddress:
-    """return a random account as seller"""
-    return web3.eth.accounts[5]
-
-
-#
-# @pytest.fixture(scope="module")
-# def sushiswap_factory_v2() -> HexAddress:
-#     """returns the uniswapfactoryV2 address for sushiswap on bsc"""
-#     return HexAddress(HexStr("0xc35DADB65012eC5796536bD9864eD8773aBc74C4"))
-#
-#
-# @pytest.fixture(scope="module")
-# def pancakeswap_factory_v2() -> HexAddress:
-#     """returns the uniswapfactoryV2 address for pancakeswap on bsc"""
-#     return HexAddress(HexStr("0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73"))
-#
-#
-# @pytest.fixture(scope="module")
-# def pancake_router() -> HexAddress:
-#     """returns the uniswaprouterV2 address for pancakeswap in bsc"""
-#     return HexAddress(HexStr("0x10ED43C718714eb63d5aA57B78B54704E256024E"))
-#
-#
-# @pytest.fixture(scope="module")
-# def pancake_code_hash() -> str:
-#     """The init code hash for pancakeswap. needed while fetching deployment"""
-#     return "0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"
-#
-#
-# @pytest.fixture(scope="module")
-# def elephant() -> HexAddress:
-#     """return hex address of the elephant token"""
-#     return HexAddress(HexStr("0xE283D0e3B8c102BAdF5E8166B73E02D96d92F688"))
-#
-#
-# @pytest.fixture(scope="module")
-# def busd() -> HexAddress:
-#     """return hex address of busd token"""
-#     return HexAddress(HexStr("0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"))
-#
-#
-# @pytest.fixture
-# def uniswap(web3: Web3, pancakeswap_factory_v2: HexAddress, pancake_router: HexAddress,
-#             pancake_code_hash: str) -> UniswapV2Deployment:
-#     """returns an instance of the pancakeswap router & factory deployment on bsc"""
-#     return fetch_deployment(web3, pancakeswap_factory_v2, pancake_router, pancake_code_hash)
-#
-#
-
-
 def test_get_deposit_balance(web3: Web3, aDai_holder: HexAddress):
 
     # polygon aDAI: 0x82E64f49Ed5EC1bC6e43DAD4FC8Af9bb3A2312EE
@@ -117,12 +65,3 @@ def test_get_deposit_balance(web3: Web3, aDai_holder: HexAddress):
     print("balance:", balance)
     assert balance > 0, "账户中aDai应大于0"
 
-
-
-# @pytest.mark.skip(msg="Find a better low liquidity token to do a test swap")
-# def test_low_liquidity_exception(uniswap: UniswapV2Deployment, large_busd_holder: HexAddress, seller: HexAddress,
-#                                  elephant: HexAddress, busd: HexAddress):
-#     buy_amount: float = 1e30
-#
-#     with pytest.raises(SwapError):
-#         estimate_token_taxes(uniswap, elephant, busd, large_busd_holder, seller, buy_amount)
