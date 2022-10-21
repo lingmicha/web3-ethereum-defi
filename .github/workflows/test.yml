@@ -23,7 +23,7 @@ jobs:
           poetry env use '3.9'
           poetry install -E data
       - name: Install Ganache
-        run: yarn global add ganache
+        run: yarn global add ganache@v7.4.4
       - name: Run test scripts
         run: poetry run pytest
         env:
