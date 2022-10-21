@@ -124,9 +124,9 @@ def test_token_tax(uniswap: UniswapV2Deployment, large_busd_holder: HexAddress, 
     token_tax_info: TokenTaxInfo = estimate_token_taxes(uniswap, babydoge, busd, large_busd_holder, seller, buy_amount)
 
     # asserting if the babydoge tax is close to 10% or not
-    assert token_tax_info.buy_tax == pytest.approx(expected_babydoge_tax_percent, rel=1e-3)
-    assert token_tax_info.transfer_tax == pytest.approx(expected_babydoge_tax_percent, rel=1e-3)
-    assert token_tax_info.sell_tax == pytest.approx(expected_babydoge_tax_percent, rel=1e-3)
+    assert token_tax_info.buy_tax == pytest.approx(expected_babydoge_tax_percent, rel=1e-2)
+    assert token_tax_info.transfer_tax == pytest.approx(expected_babydoge_tax_percent, rel=1e-2)
+    assert token_tax_info.sell_tax == pytest.approx(expected_babydoge_tax_percent, rel=1e-2)
 
 
 @pytest.mark.skip(msg="Find a better low liquidity token to do a test swap")
