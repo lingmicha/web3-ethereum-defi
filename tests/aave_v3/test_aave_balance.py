@@ -110,28 +110,28 @@ def web3(ganache_polygon_chain_fork: str):
 def test_get_deposit_balance(web3: Web3, aave_dai_token: AaveToken,  holder_1: HexAddress, holder_2: HexAddress ):
 
     # 0 balance
-    balance = aave_v3_get_deposit_balance(web3, aave_dai_token.deposit_address, holder_1)
+    balance = aave_v3_get_deposit_balance(web3, Web3.toChecksumAddress(aave_dai_token.deposit_address), holder_1)
     assert balance == 0, "账户中AAVE DAI 应为 0"
 
     # large balance
-    balance = aave_v3_get_deposit_balance(web3, aave_dai_token.deposit_address, holder_2)
+    balance = aave_v3_get_deposit_balance(web3, Web3.toChecksumAddress(aave_dai_token.deposit_address), holder_2)
     assert balance > 1.0, "账户中AAVE DAI应等于 229496.483194811632175501"
 
 
 def test_get_variable_borrow_balance(web3: Web3, aave_eurs_token: AaveToken, holder_2: HexAddress):
 
     # non-zero balance
-    balance = aave_v3_get_variable_borrow_balance(web3, aave_eurs_token.variable_borrow_address, holder_2)
+    balance = aave_v3_get_variable_borrow_balance(web3, Web3.toChecksumAddress(aave_eurs_token.variable_borrow_address), holder_2)
     assert balance > 1.0, "账户中 variableDebtPolEURS 应等于 21060.34"
 
 def test_get_stable_borrow_balance_1(web3: Web3, aave_dai_token: AaveToken, holder_3: HexAddress):
 
     # non-zero  balance
-    balance = aave_v3_get_stable_borrow_balance(web3, aave_dai_token.stable_borrow_address, holder_3)
+    balance = aave_v3_get_stable_borrow_balance(web3, Web3.toChecksumAddress(aave_dai_token.stable_borrow_address), holder_3)
     assert balance > 1.0, "账户中 stableDebtPolDAI 应等于 15161.687076820887075569"
 
 def test_get_stable_borrow_balance_2(web3: Web3, aave_eurs_token: AaveToken, holder_4: HexAddress):
 
     # non-zero  balance
-    balance = aave_v3_get_stable_borrow_balance(web3, aave_eurs_token.stable_borrow_address, holder_4)
+    balance = aave_v3_get_stable_borrow_balance(web3, Web3.toChecksumAddress(aave_eurs_token.stable_borrow_address), holder_4)
     assert balance > 1.0, "账户中 stableDebtPolEURS 应等于 15161.687076820887075569"
