@@ -88,7 +88,6 @@ VENUS_NETWORKS: dict[str, VenusNetwork] = {
                 token_address='',
                 deposit_address='0xA07c5b74C9B40447a954e1466938b865b6BBea36',
                 token_created_at_block=2473058),
-            # TUSD TRX MATIC LINK FIL DOT DOGE DAI CAKE BETH BCH ADA AAVE
             'BCH': VenusToken(
                 token_address='0x8ff795a6f4d97e7887c79bea79aba5cc76444adf',
                 deposit_address='0x5f0388ebc2b94fa8e123f404b79ccf5f40b29176',
@@ -163,16 +162,16 @@ VENUS_DEPOSIT_ADDRESS_TOKENS: dict[str, str] = {}  # autofill later
 def venus_get_json_rpc_url() -> Optional[str]:
     # Allow configuring the JSON-RPC URL via aave.json in current directory
     # If not present, user will be asked to input the URL
-    if os.path.exists('./aave.json'):
-        aave_config = json.load(open('./aave.json'))
+    if os.path.exists('./venus.json'):
+        aave_config = json.load(open('./venus.json'))
         return aave_config['json_rpc_url']
 
 
 def venus_get_account_address() -> Optional[str]:
     # Allow configuring an account address via aave.json in current directory
     # If not present, user will be asked to input the account
-    if os.path.exists('./aave.json'):
-        aave_config = json.load(open('./aave.json'))
+    if os.path.exists('./venus.json'):
+        aave_config = json.load(open('./venus.json'))
         return aave_config['account_address']
 
 
