@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python 3.9
@@ -56,5 +60,3 @@ jobs:
         run: make aavev3
       - name: Copy venus
         run: make copy-venus-abi
-      - name: Cook Compound
-        run: make compoundv2
