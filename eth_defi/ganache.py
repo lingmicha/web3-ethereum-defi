@@ -33,7 +33,7 @@ import time
 import warnings
 from dataclasses import dataclass
 from subprocess import DEVNULL, PIPE
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Union, Optional
 
 import psutil
 import requests
@@ -64,12 +64,13 @@ CLI_FLAGS = {
         "account_keys_path": "--wallet.accountKeysPath",
         "block_time": "--miner.blockTime",
         "default_balance": "--wallet.defaultBalance",
-        "time": "--chain.time",
+        "chain_time": "--chain.time",
         "unlock": "--wallet.unlockedAccounts",
         "network_id": "--chain.networkId",
         "chain_id": "--chain.chainId",
         "unlimited_contract_size": "--chain.allowUnlimitedContractSize",
         "quiet": "--logging.quiet",
+        "evm_increaseTime": "--miner.timestampIncrement",
     },
     "<=6": {
         "port": "--port",
@@ -81,11 +82,12 @@ CLI_FLAGS = {
         "account_keys_path": "--acctKeys",
         "block_time": "--blockTime",
         "default_balance": "--defaultBalanceEther",
-        "time": "--time",
+        "chain_time": "--time",
         "unlock": "--unlock",
         "network_id": "--networkId",
         "chain_id": "--chainId",
         "unlimited_contract_size": "--allowUnlimitedContractSize",
+        "evm_increaseTime": "evm_increaseTime"
     },
 }
 
@@ -186,6 +188,7 @@ def _validate_cmd_settings(cmd_settings: dict) -> dict:
         "network_id": int,
         "chain_id": int,
         "quiet": bool,
+        "evm_increaseTime": int,
     }
     for cmd, value in cmd_settings.items():
         if cmd in ganache_keys and cmd in CMD_TYPES.keys() and not isinstance(value, CMD_TYPES[cmd]):
@@ -266,6 +269,8 @@ def fork_network(
     block_time=0,
     quiet=False,
     launch_wait_seconds=20.0,
+    chain_time: Optional[datetime.datetime]=None,
+    evm_increaseTime: Optional[int]=None,
 ) -> GanacheLaunch:
     """Creates the ganache "fork" of given JSON-RPC endpoint.
 
@@ -373,6 +378,11 @@ def fork_network(
     :param quiet:
         Disable extensive logging. If there is a lot of Ganache logging it seems to crash
         on Github CI.
+    :param chain_time: datetime object that the first block should start. Use this feature, along with the evm_increaseTime method to test time-dependent code.
+    :param evm_increaseTime:
+        The amount of time, in seconds, to add to the timestamp of each new block header.
+        By default the value is "clock", which uses your system clock time as the timestamp for each block.
+
 
     """
 
@@ -380,14 +390,23 @@ def fork_network(
 
     url = f"http://localhost:{port}"
 
-    process, final_cmd = _launch(
-        cmd,
+    opts = dict(
         port=port,
         fork=json_rpc_url,
         unlock=unlocked_addresses,
         evm_version=evm_version,
         block_time=block_time,
         quiet=quiet,
+    )
+
+    if chain_time is not None:
+        opts['chain_time'] = chain_time.strftime('%Y-%m-%dT%H:%M:%S%z')
+    if evm_increaseTime is not None:
+        opts['evm_increaseTime'] = evm_increaseTime
+
+    process, final_cmd = _launch(
+        cmd,
+        **opts,
     )
 
     # Wait until Ganache is responsive

@@ -8,6 +8,9 @@ To run tests in this module:
     pytest -k test_aave_balance
 
     Fork Block Number: 34581439
+    https://polygonscan.com/block/34581439
+    Block Timestamp: Oct-20-2022 02:51:49 PM +UTC
+    datetime.strptime('Oct-20-2022 02:51:49 PM +UTC', '%b-%d-%Y %I:%M:%S %p +%Z')
 
     holder_1: 0x6564b5053C381a8D840B40d78bA229e2d8e912ed
     ADAI balance == 0.0
@@ -26,13 +29,20 @@ To run tests in this module:
 import os
 
 import flaky
+import logging
 import pytest
+from datetime import datetime
 from eth_typing import HexAddress, HexStr
 from web3 import HTTPProvider, Web3
+from decimal import Decimal
 
+from eth_defi.abi import get_deployed_contract
 from eth_defi.ganache import fork_network
 from eth_defi.aave_v3.constants import AaveToken, AaveNetwork, aave_v3_get_network_by_chain_id
 from eth_defi.aave_v3.balances import aave_v3_get_deposit_balance, aave_v3_get_variable_borrow_balance, aave_v3_get_stable_borrow_balance
+
+logger = logging.getLogger(__name__)
+
 
 # https://docs.pytest.org/en/latest/how-to/skipping.html#skip-all-test-functions-of-a-class-or-module
 pytestmark = pytest.mark.skipif(
@@ -94,7 +104,11 @@ def ganache_polygon_chain_fork() -> str:
     :return: JSON-RPC URL for Web3
     """
     mainnet_rpc = os.environ["POLYGON_CHAIN_JSON_RPC"]
-    launch = fork_network(mainnet_rpc + "@34581439")
+    launch = fork_network(mainnet_rpc + "@34581439",
+                          port=19998,
+                          evm_increaseTime=1,
+                          chain_time=datetime.strptime('Oct-20-2022 02:51:49 PM +UTC', '%b-%d-%Y %I:%M:%S %p +%Z'),
+                          )
     yield launch.json_rpc_url
     # Wind down Ganache process after the test is complete
     launch.close()
@@ -110,13 +124,21 @@ def web3(ganache_polygon_chain_fork: str):
 def test_get_deposit_balance(web3: Web3, aave_dai_token: AaveToken,  holder_1: HexAddress, holder_2: HexAddress ):
 
     # 0 balance
-    balance = aave_v3_get_deposit_balance(web3, Web3.toChecksumAddress(aave_dai_token.deposit_address), holder_1)
-    assert balance == 0, "账户中AAVE DAI 应为 0"
+    # balance = aave_v3_get_deposit_balance(web3, Web3.toChecksumAddress(aave_dai_token.deposit_address), holder_1)
+    # assert balance == 0, "账户中AAVE DAI 应为 0"
 
     # large balance
-    expected_balance = 229496.483194811632175501
-    balance = float(aave_v3_get_deposit_balance(web3, Web3.toChecksumAddress(aave_dai_token.deposit_address), holder_2))
-    assert balance == pytest.approx(expected_balance, rel=1e-1), "账户中AAVE DAI应约等于 229496.483194811632175501"
+    expected_balance = Decimal(229496.483194811632175501)
+    balance = aave_v3_get_deposit_balance(web3, Web3.toChecksumAddress(aave_dai_token.deposit_address), holder_2)
+    assert balance == pytest.approx(expected_balance, rel=Decimal(1e-3)), "账户中AAVE DAI应约等于 229496.483194811632175501"
+    logger.debug( "test_get_deposit_balance, expected_balance:{} balance:{}".format(expected_balance, balance))
+
+    # use underlying apis
+    # AToken = get_deployed_contract(web3, "aave_v3/AToken.json", aave_dai_token.deposit_address)
+    # balances = AToken.functions.balanceOf(holder_2).call(block_identifier=34581440)
+    # decimals = AToken.functions.decimals().call(block_identifier=34581440)
+    # logger.debug("Large ADAI holder at block '{}':{}".format(34581440, balances * pow(10, -decimals)))
+
 #
 # def test_get_variable_borrow_balance(web3: Web3, aave_eurs_token: AaveToken, holder_2: HexAddress):
 #
