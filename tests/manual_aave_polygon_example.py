@@ -3,6 +3,7 @@
 """
 
 from web3 import Web3, HTTPProvider
+from eth_defi.abi import get_deployed_contract
 from eth_defi.aave_v3.balances import aave_v3_get_deposit_balance, aave_v3_get_variable_borrow_balance, aave_v3_get_stable_borrow_balance
 from eth_defi.aave_v3.constants import AaveNetwork, AaveToken, aave_v3_get_network_by_chain_id
 
@@ -43,3 +44,10 @@ aave_token = aave_network.token_contracts['EURS']
 balances = aave_v3_get_stable_borrow_balance(web3, Web3.toChecksumAddress(aave_token.stable_borrow_address), some_large_holder)
 print("Large stableDebtPolEURS holder", balances)
 
+# grab balance for a particular block number
+some_large_holder = Web3.toChecksumAddress("0x5b8effbdae5941b938c1a79616d185cc3c79d4ff")
+aave_token = aave_network.token_contracts['DAI']
+AToken = get_deployed_contract(web3, "aave_v3/AToken.json", aave_token.deposit_address)
+balances = AToken.functions.balanceOf(some_large_holder).call(block_identifier=34581440)
+decimals = AToken.functions.decimals().call(block_identifier=34581440)
+print("Large ADAI holder at block '{}':{}".format(34581440, balances * pow(10, -decimals)))
