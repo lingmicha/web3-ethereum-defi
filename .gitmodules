@@ -1,6 +1,7 @@
 [submodule "sushiswap"]
 	path = contracts/sushiswap
 	url = https://github.com/tradingstrategy-ai/sushiswap.git
+	ignore= dirty
 [submodule "uniswap-v3-core"]
 	path = contracts/uniswap-v3-core
 	url = https://github.com/Uniswap/v3-core.git
