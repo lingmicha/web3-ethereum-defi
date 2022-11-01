@@ -11,4 +11,4 @@ venus_token_decimals = Decimal(10**8)
 ulyToken_decimals = Decimal(10**18)
 
 # Constants
-unlimited = Decimal(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff) # 2^256-1
+unlimited = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff # 2^256-1
