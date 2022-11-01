@@ -1,0 +1,48 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "XVSVaultHarness",
+  "sourceName": "contracts/test/XVSVaultHarness.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "blockNumber",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "votePower",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPriorVotes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b5060a98061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063836eebee14602d575b600080fd5b605c60048036036060811015604157600080fd5b506001600160a01b038135169060208101359060400135606e565b60408051918252519081900360200190f35b9291505056fea265627a7a72315820845f38e5f9d55ce10b5dfea403e0f9a610fca694001a902763206e1218a8abfb64736f6c63430005100032",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c8063836eebee14602d575b600080fd5b605c60048036036060811015604157600080fd5b506001600160a01b038135169060208101359060400135606e565b60408051918252519081900360200190f35b9291505056fea265627a7a72315820845f38e5f9d55ce10b5dfea403e0f9a610fca694001a902763206e1218a8abfb64736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,0 +1,142 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "VAIControllerStorageG1",
+  "sourceName": "contracts/VAIControllerStorage.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "comptroller",
+      "outputs": [
+        {
+          "internalType": "contract ComptrollerInterface",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "isVenusVAIInitialized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingVAIControllerImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "vaiControllerImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "venusVAIMinterIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "venusVAIState",
+      "outputs": [
+        {
+          "internalType": "uint224",
+          "name": "index",
+          "type": "uint224"
+        },
+        {
+          "internalType": "uint32",
+          "name": "block",
+          "type": "uint32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5061020d806100206000396000f3fe608060405234801561001057600080fd5b50600436106100875760003560e01c806360c954ef1161005b57806360c954ef146100f8578063b06bb42614610114578063e44e61681461011c578063f851a4401461014c57610087565b80623b58841461008c57806324650602146100b057806326782247146100e85780635fe3b567146100f0575b600080fd5b610094610154565b604080516001600160a01b039092168252519081900360200190f35b6100d6600480360360208110156100c657600080fd5b50356001600160a01b0316610163565b60408051918252519081900360200190f35b610094610175565b610094610184565b610100610193565b604080519115158252519081900360200190f35b61009461019c565b6101246101ab565b604080516001600160e01b03909316835263ffffffff90911660208301528051918290030190f35b6100946101c9565b6002546001600160a01b031681565b60076020526000908152604090205481565b6001546001600160a01b031681565b6004546001600160a01b031681565b60065460ff1681565b6003546001600160a01b031681565b6005546001600160e01b03811690600160e01b900463ffffffff1682565b6000546001600160a01b03168156fea265627a7a723158200efc401dd96ff90862a2332c55fd1e8d1f5083003aaf1135af5dc5265701471f64736f6c63430005100032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100875760003560e01c806360c954ef1161005b57806360c954ef146100f8578063b06bb42614610114578063e44e61681461011c578063f851a4401461014c57610087565b80623b58841461008c57806324650602146100b057806326782247146100e85780635fe3b567146100f0575b600080fd5b610094610154565b604080516001600160a01b039092168252519081900360200190f35b6100d6600480360360208110156100c657600080fd5b50356001600160a01b0316610163565b60408051918252519081900360200190f35b610094610175565b610094610184565b610100610193565b604080519115158252519081900360200190f35b61009461019c565b6101246101ab565b604080516001600160e01b03909316835263ffffffff90911660208301528051918290030190f35b6100946101c9565b6002546001600160a01b031681565b60076020526000908152604090205481565b6001546001600160a01b031681565b6004546001600160a01b031681565b60065460ff1681565b6003546001600160a01b031681565b6005546001600160e01b03811690600160e01b900463ffffffff1682565b6000546001600160a01b03168156fea265627a7a723158200efc401dd96ff90862a2332c55fd1e8d1f5083003aaf1135af5dc5265701471f64736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,0 +1,23 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "RefreshSpeedsProxy",
+  "sourceName": "contracts/test/RefreshSpeedsProxy.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "comptroller",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b5060405160d438038060d483398181016040526020811015602f57600080fd5b5051604080516312a2adc760e01b815290516001600160a01b038316916312a2adc791600480830192600092919082900301818387803b158015607157600080fd5b505af11580156084573d6000803e3d6000fd5b5050505050603e8060966000396000f3fe6080604052600080fdfea265627a7a72315820075122e47d0c17a18eaf21baf81a6e1d1cd8842f20e292ab1a41ace66ac32f5364736f6c63430005100032",
+  "deployedBytecode": "0x6080604052600080fdfea265627a7a72315820075122e47d0c17a18eaf21baf81a6e1d1cd8842f20e292ab1a41ace66ac32f5364736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

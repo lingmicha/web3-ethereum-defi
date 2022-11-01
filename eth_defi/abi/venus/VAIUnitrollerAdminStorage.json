@@ -1,0 +1,71 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "VAIUnitrollerAdminStorage",
+  "sourceName": "contracts/VAIControllerStorage.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingVAIControllerImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "vaiControllerImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5060ef8061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060455760003560e01c80623b588414604a5780632678224714606c578063b06bb426146072578063f851a440146078575b600080fd5b6050607e565b604080516001600160a01b039092168252519081900360200190f35b6050608d565b6050609c565b605060ab565b6002546001600160a01b031681565b6001546001600160a01b031681565b6003546001600160a01b031681565b6000546001600160a01b03168156fea265627a7a72315820c8321271182a9a9406fcf572b5a88eae61347d3dccf625b56e5b16f30539aa5464736f6c63430005100032",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060455760003560e01c80623b588414604a5780632678224714606c578063b06bb426146072578063f851a440146078575b600080fd5b6050607e565b604080516001600160a01b039092168252519081900360200190f35b6050608d565b6050609c565b605060ab565b6002546001600160a01b031681565b6001546001600160a01b031681565b6003546001600160a01b031681565b6000546001600160a01b03168156fea265627a7a72315820c8321271182a9a9406fcf572b5a88eae61347d3dccf625b56e5b16f30539aa5464736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

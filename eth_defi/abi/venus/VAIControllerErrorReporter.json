@@ -1,0 +1,36 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "VAIControllerErrorReporter",
+  "sourceName": "contracts/ErrorReporter.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "error",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "info",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "detail",
+          "type": "uint256"
+        }
+      ],
+      "name": "Failure",
+      "type": "event"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a723158203d43d3b8a743c5ea0cc68f49c25258d15e70f983003cbd9c801f1743f82e129b64736f6c63430005100032",
+  "deployedBytecode": "0x6080604052600080fdfea265627a7a723158203d43d3b8a743c5ea0cc68f49c25258d15e70f983003cbd9c801f1743f82e129b64736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

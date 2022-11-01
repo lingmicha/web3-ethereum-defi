@@ -1,0 +1,53 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MockPot",
+  "sourceName": "contracts/test/MockMCD.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "dsr_",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "dsr",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "dsr_",
+          "type": "uint256"
+        }
+      ],
+      "name": "setDsr",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161010b38038061010b8339818101604052602081101561003357600080fd5b5051610047816001600160e01b0361004d16565b50610052565b600055565b60ab806100606000396000f3fe6080604052348015600f57600080fd5b506004361060325760003560e01c8063487bf08214603757806362499acf14604f575b600080fd5b603d606b565b60408051918252519081900360200190f35b606960048036036020811015606357600080fd5b50356071565b005b60005481565b60005556fea265627a7a72315820ba33ae7dab10c31b72c883b0583394c5fdd228a2d64ef2a882856b732e080ff164736f6c63430005100032",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060325760003560e01c8063487bf08214603757806362499acf14604f575b600080fd5b603d606b565b60408051918252519081900360200190f35b606960048036036020811015606357600080fd5b50356071565b005b60005481565b60005556fea265627a7a72315820ba33ae7dab10c31b72c883b0583394c5fdd228a2d64ef2a882856b732e080ff164736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

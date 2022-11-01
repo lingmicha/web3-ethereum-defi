@@ -1,0 +1,26 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "FalseMarkerMethodComptroller",
+  "sourceName": "contracts/test/FalseMarker.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "isComptroller",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b5060808061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060275760003560e01c80627e3dd214602c575b600080fd5b60326046565b604080519115158252519081900360200190f35b60008156fea265627a7a723158207e233a410fabfaee8f0240d487b199e82698e640fd41b4eb73034079b5a941f664736f6c63430005100032",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060275760003560e01c80627e3dd214602c575b600080fd5b60326046565b604080519115158252519081900360200190f35b60008156fea265627a7a723158207e233a410fabfaee8f0240d487b199e82698e640fd41b4eb73034079b5a941f664736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

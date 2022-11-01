@@ -1,0 +1,167 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "VRTVaultStorage",
+  "sourceName": "contracts/VRTVault/VRTVaultStorage.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "_notEntered",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "implementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "interestRatePerBlock",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "userInfo",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "userAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "accrualStartBlockNumber",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalPrincipalAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastWithdrawnBlockNumber",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "vaultPaused",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "vrt",
+      "outputs": [
+        {
+          "internalType": "contract IBEP20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b50610247806100206000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c80635c60da1b116100665780635c60da1b1461013457806373d025d61461013c578063a9ffd6b214610158578063d8438ae814610160578063f851a4401461016857610093565b80631959a0021461009857806326782247146100ee5780632ff7709e14610112578063396f7b231461012c575b600080fd5b6100be600480360360208110156100ae57600080fd5b50356001600160a01b0316610170565b604080516001600160a01b0390951685526020850193909352838301919091526060830152519081900360800190f35b6100f66101a1565b604080516001600160a01b039092168252519081900360200190f35b61011a6101b0565b60408051918252519081900360200190f35b6100f66101b6565b6100f66101c5565b6101446101d4565b604080519115158252519081900360200190f35b6100f66101e4565b6101446101f3565b6100f6610203565b60066020526000908152604090208054600182015460028301546003909301546001600160a01b0390921692909184565b6001546001600160a01b031681565b60055481565b6003546001600160a01b031681565b6002546001600160a01b031681565b600354600160a81b900460ff1681565b6004546001600160a01b031681565b600354600160a01b900460ff1681565b6000546001600160a01b03168156fea265627a7a723158201f9c5d26c5ec6d20e8dd0fe4bcbd303b77f4955516265cd70ec88d2df8b17ef864736f6c63430005100032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100935760003560e01c80635c60da1b116100665780635c60da1b1461013457806373d025d61461013c578063a9ffd6b214610158578063d8438ae814610160578063f851a4401461016857610093565b80631959a0021461009857806326782247146100ee5780632ff7709e14610112578063396f7b231461012c575b600080fd5b6100be600480360360208110156100ae57600080fd5b50356001600160a01b0316610170565b604080516001600160a01b0390951685526020850193909352838301919091526060830152519081900360800190f35b6100f66101a1565b604080516001600160a01b039092168252519081900360200190f35b61011a6101b0565b60408051918252519081900360200190f35b6100f66101b6565b6100f66101c5565b6101446101d4565b604080519115158252519081900360200190f35b6100f66101e4565b6101446101f3565b6100f6610203565b60066020526000908152604090208054600182015460028301546003909301546001600160a01b0390921692909184565b6001546001600160a01b031681565b60055481565b6003546001600160a01b031681565b6002546001600160a01b031681565b600354600160a81b900460ff1681565b6004546001600160a01b031681565b600354600160a01b900460ff1681565b6000546001600160a01b03168156fea265627a7a723158201f9c5d26c5ec6d20e8dd0fe4bcbd303b77f4955516265cd70ec88d2df8b17ef864736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

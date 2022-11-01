@@ -1,0 +1,99 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MockJug",
+  "sourceName": "contracts/test/MockMCD.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "duty_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "base_",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "base",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "ilks",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "duty",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rho",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "base_",
+          "type": "uint256"
+        }
+      ],
+      "name": "setBase",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "duty_",
+          "type": "uint256"
+        }
+      ],
+      "name": "setETHDuty",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161021b38038061021b8339818101604052604081101561003357600080fd5b50805160209091015161004e826001600160e01b0361006716565b610060816001600160e01b0361009c16565b50506100a1565b64424e422d4160d81b60009081526020527f43d76850b9715fb6113133825e0d619363fc4af1fb12a3c1a60bc1e42049a1c855565b600155565b61016b806100b06000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c806338e80f68146100515780635001f3b514610070578063b585a7721461008a578063d9638d36146100a7575b600080fd5b61006e6004803603602081101561006757600080fd5b50356100dd565b005b6100786100e2565b60408051918252519081900360200190f35b61006e600480360360208110156100a057600080fd5b50356100e8565b6100c4600480360360208110156100bd57600080fd5b503561011d565b6040805192835260208301919091528051918290030190f35b600155565b60015481565b64424e422d4160d81b60009081526020527f43d76850b9715fb6113133825e0d619363fc4af1fb12a3c1a60bc1e42049a1c855565b600060208190529081526040902080546001909101548256fea265627a7a7231582060bb7f638a63a14238a5f3e3cebc26d7c7b52f07c7b79e35a410b3141ec9193f64736f6c63430005100032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c806338e80f68146100515780635001f3b514610070578063b585a7721461008a578063d9638d36146100a7575b600080fd5b61006e6004803603602081101561006757600080fd5b50356100dd565b005b6100786100e2565b60408051918252519081900360200190f35b61006e600480360360208110156100a057600080fd5b50356100e8565b6100c4600480360360208110156100bd57600080fd5b503561011d565b6040805192835260208301919091528051918290030190f35b600155565b60015481565b64424e422d4160d81b60009081526020527f43d76850b9715fb6113133825e0d619363fc4af1fb12a3c1a60bc1e42049a1c855565b600060208190529081526040902080546001909101548256fea265627a7a7231582060bb7f638a63a14238a5f3e3cebc26d7c7b52f07c7b79e35a410b3141ec9193f64736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

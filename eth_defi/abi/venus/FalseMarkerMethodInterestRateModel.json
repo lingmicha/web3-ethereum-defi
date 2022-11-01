@@ -1,0 +1,26 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "FalseMarkerMethodInterestRateModel",
+  "sourceName": "contracts/test/FalseMarker.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "isInterestRateModel",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b5060818061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80632191f92a14602d575b600080fd5b60336047565b604080519115158252519081900360200190f35b60008156fea265627a7a723158203bef89ca7f714be018ae712d31b3e5aa4050d205185ef83cd29d7c8840de921464736f6c63430005100032",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c80632191f92a14602d575b600080fd5b60336047565b604080519115158252519081900360200190f35b60008156fea265627a7a723158203bef89ca7f714be018ae712d31b3e5aa4050d205185ef83cd29d7c8840de921464736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

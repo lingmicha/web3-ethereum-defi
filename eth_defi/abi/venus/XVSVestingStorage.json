@@ -1,0 +1,172 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "XVSVestingStorage",
+  "sourceName": "contracts/VRT/XVSVestingStorage.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "_notEntered",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "implementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "initialized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "vestings",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "withdrawnAmount",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "vrtConversionAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "xvs",
+      "outputs": [
+        {
+          "internalType": "contract IBEP20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b50610260806100206000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c80635c60da1b116100665780635c60da1b146100e8578063bb443b6c146100f0578063bd84477d146100f8578063d8438ae814610154578063f851a4401461015c57610093565b8063158ef93e1461009857806326782247146100b4578063396f7b23146100d85780634e79ed3c146100e0575b600080fd5b6100a0610164565b604080519115158252519081900360200190f35b6100bc610174565b604080516001600160a01b039092168252519081900360200190f35b6100bc610183565b6100bc610192565b6100bc6101a1565b6100bc6101b0565b6101246004803603604081101561010e57600080fd5b506001600160a01b0381351690602001356101bf565b604080516001600160a01b0390951685526020850193909352838301919091526060830152519081900360800190f35b6100a061020c565b6100bc61021c565b600354600160a81b900460ff1681565b6001546001600160a01b031681565b6003546001600160a01b031681565b6004546001600160a01b031681565b6002546001600160a01b031681565b6005546001600160a01b031681565b600660205281600052604060002081815481106101d857fe5b600091825260209091206004909102018054600182015460028301546003909301546001600160a01b039092169450925084565b600354600160a01b900460ff1681565b6000546001600160a01b03168156fea265627a7a72315820e6fe39014e66ad8bc037059f71321e261e8d1d14c9f28dfe5193cfba3732651e64736f6c63430005100032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100935760003560e01c80635c60da1b116100665780635c60da1b146100e8578063bb443b6c146100f0578063bd84477d146100f8578063d8438ae814610154578063f851a4401461015c57610093565b8063158ef93e1461009857806326782247146100b4578063396f7b23146100d85780634e79ed3c146100e0575b600080fd5b6100a0610164565b604080519115158252519081900360200190f35b6100bc610174565b604080516001600160a01b039092168252519081900360200190f35b6100bc610183565b6100bc610192565b6100bc6101a1565b6100bc6101b0565b6101246004803603604081101561010e57600080fd5b506001600160a01b0381351690602001356101bf565b604080516001600160a01b0390951685526020850193909352838301919091526060830152519081900360800190f35b6100a061020c565b6100bc61021c565b600354600160a81b900460ff1681565b6001546001600160a01b031681565b6003546001600160a01b031681565b6004546001600160a01b031681565b6002546001600160a01b031681565b6005546001600160a01b031681565b600660205281600052604060002081815481106101d857fe5b600091825260209091206004909102018054600182015460028301546003909301546001600160a01b039092169450925084565b600354600160a01b900460ff1681565b6000546001600160a01b03168156fea265627a7a72315820e6fe39014e66ad8bc037059f71321e261e8d1d14c9f28dfe5193cfba3732651e64736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

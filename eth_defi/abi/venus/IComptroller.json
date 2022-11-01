@@ -1,0 +1,20 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IComptroller",
+  "sourceName": "contracts/test/RefreshSpeedsProxy.sol",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "refreshVenusSpeeds",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MathHelpers",
+  "sourceName": "contracts/test/MathHelpers.sol",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603e80601d6000396000f3fe6080604052600080fdfea265627a7a72315820dadd61e1181e53620b1988cf205337507648dad10e410af03b348edfe5ef9c6364736f6c63430005100032",
+  "deployedBytecode": "0x6080604052600080fdfea265627a7a72315820dadd61e1181e53620b1988cf205337507648dad10e410af03b348edfe5ef9c6364736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

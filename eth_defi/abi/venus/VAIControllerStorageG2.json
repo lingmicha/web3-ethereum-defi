@@ -1,0 +1,187 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "VAIControllerStorageG2",
+  "sourceName": "contracts/VAIControllerStorage.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "comptroller",
+      "outputs": [
+        {
+          "internalType": "contract ComptrollerInterface",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "isVenusVAIInitialized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingVAIControllerImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "treasuryAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "treasuryGuardian",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "treasuryPercent",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "vaiControllerImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "venusVAIMinterIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "venusVAIState",
+      "outputs": [
+        {
+          "internalType": "uint224",
+          "name": "index",
+          "type": "uint224"
+        },
+        {
+          "internalType": "uint32",
+          "name": "block",
+          "type": "uint32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5061026a806100206000396000f3fe608060405234801561001057600080fd5b50600436106100a85760003560e01c806360c954ef1161007157806360c954ef14610121578063b06bb4261461013d578063b2eafc3914610145578063c5f956af1461014d578063e44e616814610155578063f851a44014610185576100a8565b80623b5884146100ad57806304ef9d58146100d157806324650602146100eb57806326782247146101115780635fe3b56714610119575b600080fd5b6100b561018d565b604080516001600160a01b039092168252519081900360200190f35b6100d961019c565b60408051918252519081900360200190f35b6100d96004803603602081101561010157600080fd5b50356001600160a01b03166101a2565b6100b56101b4565b6100b56101c3565b6101296101d2565b604080519115158252519081900360200190f35b6100b56101db565b6100b56101ea565b6100b56101f9565b61015d610208565b604080516001600160e01b03909316835263ffffffff90911660208301528051918290030190f35b6100b5610226565b6002546001600160a01b031681565b600a5481565b60076020526000908152604090205481565b6001546001600160a01b031681565b6004546001600160a01b031681565b60065460ff1681565b6003546001600160a01b031681565b6008546001600160a01b031681565b6009546001600160a01b031681565b6005546001600160e01b03811690600160e01b900463ffffffff1682565b6000546001600160a01b03168156fea265627a7a723158206dff2edb957123dc69094126451da9876522b64e2df4290e105903e281c5c0c664736f6c63430005100032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100a85760003560e01c806360c954ef1161007157806360c954ef14610121578063b06bb4261461013d578063b2eafc3914610145578063c5f956af1461014d578063e44e616814610155578063f851a44014610185576100a8565b80623b5884146100ad57806304ef9d58146100d157806324650602146100eb57806326782247146101115780635fe3b56714610119575b600080fd5b6100b561018d565b604080516001600160a01b039092168252519081900360200190f35b6100d961019c565b60408051918252519081900360200190f35b6100d96004803603602081101561010157600080fd5b50356001600160a01b03166101a2565b6100b56101b4565b6100b56101c3565b6101296101d2565b604080519115158252519081900360200190f35b6100b56101db565b6100b56101ea565b6100b56101f9565b61015d610208565b604080516001600160e01b03909316835263ffffffff90911660208301528051918290030190f35b6100b5610226565b6002546001600160a01b031681565b600a5481565b60076020526000908152604090205481565b6001546001600160a01b031681565b6004546001600160a01b031681565b60065460ff1681565b6003546001600160a01b031681565b6008546001600160a01b031681565b6009546001600160a01b031681565b6005546001600160e01b03811690600160e01b900463ffffffff1682565b6000546001600160a01b03168156fea265627a7a723158206dff2edb957123dc69094126451da9876522b64e2df4290e105903e281c5c0c664736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,0 +1,313 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "XVSVaultStorage",
+  "sourceName": "contracts/XVSVault/XVSVaultStorage.sol",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "DELEGATION_TYPEHASH",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "DOMAIN_TYPEHASH",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "name": "checkpoints",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "fromBlock",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint96",
+          "name": "votes",
+          "type": "uint96"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "delegates",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "implementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "nonces",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "numCheckpoints",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingAdmin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pendingXVSVaultImplementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "poolInfos",
+      "outputs": [
+        {
+          "internalType": "contract IBEP20",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "allocPoint",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastRewardBlock",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "accRewardPerShare",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lockPeriod",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "rewardTokenAmountsPerBlock",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "totalAllocPoints",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "xvsAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "xvsStore",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561001057600080fd5b5061053a806100206000396000f3fe608060405234801561001057600080fd5b50600436106100f55760003560e01c80635c60da1b11610097578063de0368b211610066578063de0368b214610288578063e7a324dc14610290578063f1127ed814610298578063f851a440146102f7576100f5565b80635c60da1b146101ba5780636fcfff45146101c25780637ecebe001461020157806392e3500014610227576100f5565b80632eda5c6c116100d35780632eda5c6c14610140578063358ae036146101665780634298bdbd1461016e578063587cde1e14610194576100f5565b806320606b70146100fa57806324f52bbf146101145780632678224714610138575b600080fd5b6101026102ff565b60408051918252519081900360200190f35b61011c61031a565b604080516001600160a01b039092168252519081900360200190f35b61011c610329565b6101026004803603602081101561015657600080fd5b50356001600160a01b0316610338565b61011c61034a565b6101026004803603602081101561018457600080fd5b50356001600160a01b0316610359565b61011c600480360360208110156101aa57600080fd5b50356001600160a01b031661036b565b61011c610386565b6101e8600480360360208110156101d857600080fd5b50356001600160a01b0316610395565b6040805163ffffffff9092168252519081900360200190f35b6101026004803603602081101561021757600080fd5b50356001600160a01b03166103ad565b6102536004803603604081101561023d57600080fd5b506001600160a01b0381351690602001356103bf565b604080516001600160a01b03909616865260208601949094528484019290925260608401526080830152519081900360a00190f35b61011c610414565b610102610423565b6102ca600480360360408110156102ae57600080fd5b5080356001600160a01b0316906020013563ffffffff1661043e565b6040805163ffffffff90931683526bffffffffffffffffffffffff90911660208301528051918290030190f35b61011c610479565b60405180604361048982396043019050604051809103902081565b6004546001600160a01b031681565b6001546001600160a01b031681565b60066020526000908152604090205481565b6005546001600160a01b031681565b60096020526000908152604090205481565b600f602052600090815260409020546001600160a01b031681565b6002546001600160a01b031681565b60116020526000908152604090205463ffffffff1681565b600e6020526000908152604090205481565b600860205281600052604060002081815481106103d857fe5b6000918252602090912060059091020180546001820154600283015460038401546004909401546001600160a01b039093169550909350919085565b6003546001600160a01b031681565b60405180603a6104cc8239603a019050604051809103902081565b601060209081526000928352604080842090915290825290205463ffffffff81169064010000000090046bffffffffffffffffffffffff1682565b6000546001600160a01b03168156fe454950373132446f6d61696e28737472696e67206e616d652c75696e7432353620636861696e49642c6164647265737320766572696679696e67436f6e74726163742944656c65676174696f6e28616464726573732064656c6567617465652c75696e74323536206e6f6e63652c75696e743235362065787069727929a265627a7a72315820af6445eebf3ca30b1a9d34f4b0a9daabf823bb04f6d2d2b1820a2148d59fe11564736f6c63430005100032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100f55760003560e01c80635c60da1b11610097578063de0368b211610066578063de0368b214610288578063e7a324dc14610290578063f1127ed814610298578063f851a440146102f7576100f5565b80635c60da1b146101ba5780636fcfff45146101c25780637ecebe001461020157806392e3500014610227576100f5565b80632eda5c6c116100d35780632eda5c6c14610140578063358ae036146101665780634298bdbd1461016e578063587cde1e14610194576100f5565b806320606b70146100fa57806324f52bbf146101145780632678224714610138575b600080fd5b6101026102ff565b60408051918252519081900360200190f35b61011c61031a565b604080516001600160a01b039092168252519081900360200190f35b61011c610329565b6101026004803603602081101561015657600080fd5b50356001600160a01b0316610338565b61011c61034a565b6101026004803603602081101561018457600080fd5b50356001600160a01b0316610359565b61011c600480360360208110156101aa57600080fd5b50356001600160a01b031661036b565b61011c610386565b6101e8600480360360208110156101d857600080fd5b50356001600160a01b0316610395565b6040805163ffffffff9092168252519081900360200190f35b6101026004803603602081101561021757600080fd5b50356001600160a01b03166103ad565b6102536004803603604081101561023d57600080fd5b506001600160a01b0381351690602001356103bf565b604080516001600160a01b03909616865260208601949094528484019290925260608401526080830152519081900360a00190f35b61011c610414565b610102610423565b6102ca600480360360408110156102ae57600080fd5b5080356001600160a01b0316906020013563ffffffff1661043e565b6040805163ffffffff90931683526bffffffffffffffffffffffff90911660208301528051918290030190f35b61011c610479565b60405180604361048982396043019050604051809103902081565b6004546001600160a01b031681565b6001546001600160a01b031681565b60066020526000908152604090205481565b6005546001600160a01b031681565b60096020526000908152604090205481565b600f602052600090815260409020546001600160a01b031681565b6002546001600160a01b031681565b60116020526000908152604090205463ffffffff1681565b600e6020526000908152604090205481565b600860205281600052604060002081815481106103d857fe5b6000918252602090912060059091020180546001820154600283015460038401546004909401546001600160a01b039093169550909350919085565b6003546001600160a01b031681565b60405180603a6104cc8239603a019050604051809103902081565b601060209081526000928352604080842090915290825290205463ffffffff81169064010000000090046bffffffffffffffffffffffff1682565b6000546001600160a01b03168156fe454950373132446f6d61696e28737472696e67206e616d652c75696e7432353620636861696e49642c6164647265737320766572696679696e67436f6e74726163742944656c65676174696f6e28616464726573732064656c6567617465652c75696e74323536206e6f6e63652c75696e743235362065787069727929a265627a7a72315820af6445eebf3ca30b1a9d34f4b0a9daabf823bb04f6d2d2b1820a2148d59fe11564736f6c63430005100032",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
