@@ -3,11 +3,12 @@ import os
 
 from eth_defi.uniswap_v3.events import fetch_events_to_csv
 from eth_defi.uniswap_v3.liquidity import create_tick_csv, create_tick_delta_csv
+from eth_defi.event_reader.json_state import JSONFileScanState
 
 json_rpc_url = os.environ["JSON_RPC_URL"]
 
-fetch_events_to_csv(json_rpc_url, output_folder=".")
+fetch_events_to_csv(json_rpc_url, JSONFileScanState("./state.log"), output_folder=".")
 
-tick_delta_csv = create_tick_delta_csv("./uniswapv3-Mint.csv", "./uniswapv3-Burn.csv", ".")
+tick_delta_csv = create_tick_delta_csv("./uniswap-v3-mint.csv", "./uniswap-v3-burn.csv", ".")
 
-create_tick_csv("./uniswapv3-tickdeltas.csv", ".")
+create_tick_csv("./uniswap-v3-tickdeltas.csv", ".")
