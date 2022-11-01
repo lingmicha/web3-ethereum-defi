@@ -311,6 +311,21 @@ def fetch_events_to_csv(
             # Sync the state of updated events
             state.save_state(current_block)
 
+        # Get contracts
+        venus_token = get_contract(web3, 'venus/VBep20.json')
+
+        events = [
+            venus_token.events.Mint,
+            venus_token.events.Redeem,
+            venus_token.events.Borrow,
+            venus_token.events.LiquidateBorrow,
+            venus_token.events.RepayBorrow,
+        ]
+
+        addresses = [t.deposit_address for t in VENUS_NETWORKS['bsc'].token_contracts.values()]
+        flter = prepare_filter(events)
+        flter.contract_address = addresses
+
         # Read specified events in block range
         for log_result in read_events_concurrent(
             executor,
@@ -320,6 +335,7 @@ def fetch_events_to_csv(
             notify=update_progress,
             chunk_size=100,
             context=token_cache,
+            filter=flter,
         ):
             try:
                 # write to correct buffer

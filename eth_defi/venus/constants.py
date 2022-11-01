@@ -148,7 +148,7 @@ VENUS_NETWORKS: dict[str, VenusNetwork] = {
     ),
 }
 
-VENUS_DEPOSIT_ADDRESS_TOKENS: dict[str, str] = {}  # autofill later
+VENUS_DEPOSIT_ADDRESS_TOKENS: dict[ChecksumAddress, str] = {}  # autofill later
 
 
 # Helper functions for reading JSON-RPC URLs and account addresses from an optional aave.json file.

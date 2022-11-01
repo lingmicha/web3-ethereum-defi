@@ -75,8 +75,8 @@ def test_read_events():
     ]
 
     addresses = [t.deposit_address for t in VENUS_NETWORKS['bsc'].token_contracts.values()]
-    filter = prepare_filter(events)
-    filter.contract_address = addresses
+    flter = prepare_filter(events)
+    flter.contract_address = addresses
 
     token_cache = TokenCache()
 
@@ -94,7 +94,7 @@ def test_read_events():
         chunk_size=1000,
         context=token_cache,
         extract_timestamps=None,
-        filter=filter,
+        filter=flter,
     ):
         out.append(decode_events(log_result))
 
