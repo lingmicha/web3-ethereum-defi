@@ -4,26 +4,27 @@ import logging
 import datetime
 from pathlib import Path
 from tqdm.auto import tqdm
-
-from web3 import Web3
+from pandas import DataFrame
+from retry import retry
+from web3 import Web3, exceptions
 from requests.adapters import HTTPAdapter
 
+from eth_defi.abi import get_deployed_contract
 from eth_defi.event_reader.conversion import (
-    convert_uint256_bytes_to_address,
-    convert_uint256_string_to_address,
-    convert_uint256_string_to_int,
     decode_data,
     convert_int256_bytes_to_int,
 )
-from eth_defi.event_reader.logresult import LogContext
-from eth_defi.event_reader.reader import LogResult, read_events_concurrent
+
 from eth_defi.token import TokenDetails, fetch_erc20_details
-from eth_defi.venus.constants import venus_get_token_name_by_deposit_address, VenusToken, VenusNetwork, VENUS_NETWORKS
 from eth_defi.abi import get_contract
-from eth_defi.event_reader.reader import prepare_filter,read_events, read_events_concurrent
+
+from eth_defi.event_reader.logresult import LogContext
+from eth_defi.event_reader.reader import LogResult, prepare_filter, read_events_concurrent, extract_timestamps_json_rpc
 from eth_defi.event_reader.web3factory import TunedWeb3Factory
 from eth_defi.event_reader.web3worker import create_thread_pool_executor
 from eth_defi.event_reader.state import ScanState
+
+from eth_defi.venus.constants import venus_get_token_name_by_deposit_address, VENUS_NETWORKS
 
 
 logger = logging.getLogger(__name__)
@@ -44,7 +45,8 @@ class TokenCache(LogContext):
         return self.cache[address]
 
 
-def decode_events(log: LogResult) -> dict:
+@retry(exceptions.BadFunctionCallOutput, tries=5, delay=2, backoff=2)
+def decode_accrue_interest_events(log: LogResult) -> dict:
     """Process venus event.
 
     This function does manually optimised high speed decoding of the event.
@@ -53,53 +55,54 @@ def decode_events(log: LogResult) -> dict:
 
     .. code-block::
 
-        event Mint(address,uint256,uint256);
-        event Redeem(address,uint256,uint256);
-
-        event Borrow(address,uint256,uint256,uint256);
-        event LiquidateBorrow(address,address,uint256,address,uint256);
-        event RepayBorrow(address,address,uint256,uint256,uint256);
-
+        AccrueInterest(uint256,uint256,uint256,uint256)
     """
-
-    '''The raw log result looks like：
-    {'address': '0x95c78222b3d6e262426483d42cfa53685a67ab9d',
-     'topics': ['0x4c209b5fc8ad50758f13e2e1088ba56a560dff690a1c6fef26394f4c03821c4f'],
-     'data': '0x000000000000000000000000ded08efb71abcc782a86d53a43731c77ca1250cf000000000000000000000000000000000000000000000035f057d41869acc0000000000000000000000000000000000000000000000000000000042d49347f25',
-     'blockNumber': '0x1502408',
-     'transactionHash': '0x5a5ac368ec989338bcde6956cc393eb545903dc1c31f686f98c0435c31217f69',
-     'transactionIndex': '0x58',
-     'blockHash': '0x404d7158ce7baea438eaf2461ed4881379a903eacf1b791f979314d1e8740512',
-     'logIndex': '0xd4',
-     'removed': False,
-     'context': <eth_defi.venus.events.TokenCache at 0x7f8d4253fcd0>,
-     'event': web3._utils.datatypes.Mint,
-     'timestamp': None}
-    '''
 
     # Do additional lookup for the token data
     web3 = log["event"].web3
     token_cache: TokenCache = log["context"]
+    block_time = datetime.datetime.utcfromtimestamp(log["timestamp"])
+    block_number = int(log["blockNumber"], 16)
 
     # Any indexed Solidity event parameter will be in topics data.
     # The first topics (0) is always the event signature.
     deposit_address = Web3.toChecksumAddress(log["address"])
     token_name = venus_get_token_name_by_deposit_address(deposit_address)
+    contract = get_deployed_contract(web3, "venus/VBep20.json", deposit_address)
 
     # Chop data blob to byte32 entries
     data_entries = decode_data(log["data"])
 
-    minter_address = Web3.toChecksumAddress(convert_uint256_bytes_to_address(data_entries[0]))
+    cash_prior = convert_int256_bytes_to_int(data_entries[0])
+    interest_accumulated = convert_int256_bytes_to_int(data_entries[1])
+    borrow_index = convert_int256_bytes_to_int(data_entries[2])
+    total_borrows = convert_int256_bytes_to_int(data_entries[3])
+
+    # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
+    borrow_rate_per_block = contract.functions.borrowRatePerBlock().call(block_identifier=block_number)
+    supply_rate_per_block = contract.functions.supplyRatePerBlock().call(block_identifier=block_number)
+    total_borrow = contract.functions.totalBorrowsCurrent().call(block_identifier=block_number)
+    total_supply = contract.functions.totalSupply().call(block_identifier=block_number)
 
     data = {
-        "block_number": int(log["blockNumber"], 16),
+        "block_number": block_number,
+        "timestamp": block_time,
         "tx_hash": log["transactionHash"],
         "log_index": int(log["logIndex"], 16),
+        "token": token_name,
 
-        "token_name": token_name,
+        # event data used to backward calc accrued rates/interests
         "deposit_address": deposit_address,
-        "minter_address": minter_address,
+        "cash_prior": cash_prior,
+        "interest_accumulated": interest_accumulated,
+        "borrow_index": borrow_index,
+        "total_borrows": total_borrows,
 
+        # below is forward rates read directly from the chain:
+        "borrow_rate_per_block": borrow_rate_per_block,
+        "supply_rate_per_block": supply_rate_per_block,
+        "total_borrow": total_borrow,
+        "total_supply": total_supply,
     }
     return data
 
@@ -108,81 +111,32 @@ def get_event_mapping(web3: Web3) -> dict:
     """Returns tracked event types and mapping.
 
     Currently we are tracking these events:
-        event Mint(address,uint256,uint256);
-        event Redeem(address,uint256,uint256);
-        event Borrow(address,uint256,uint256,uint256);
-        event LiquidateBorrow(address,address,uint256,address,uint256);
-        event RepayBorrow(address,address,uint256,uint256,uint256);
+        event AccrueInterest(uint256,uint256,uint256,uint256);
     """
 
     # Get contracts
     venus_token = get_contract(web3, 'venus/VBep20.json')
 
     return {
-        "Mint": {
-            "contract_event": venus_token.events.Mint,
+        "AccrueInterest": {
+            "contract_event": venus_token.events.AccrueInterest,
             "field_names": [
                 "block_number",
                 "timestamp",
                 "tx_hash",
                 "log_index",
-                "token_name",
+                "token",
                 "deposit_address",
-                "minter_address",
-            ],
-            "decode_function": decode_events,
-        },
-        "Redeem": {
-            "contract_event": venus_token.events.Redeem,
-            "field_names": [
-                "block_number",
-                "timestamp",
-                "tx_hash",
-                "log_index",
-                "token_name",
-                "deposit_address",
-                "minter_address",
-            ],
-            "decode_function": decode_events,
-        },
-        "Borrow": {
-            "contract_event": venus_token.events.Borrow,
-            "field_names": [
-                "block_number",
-                "timestamp",
-                "tx_hash",
-                "log_index",
-                "token_name",
-                "deposit_address",
-                "minter_address",
-            ],
-            "decode_function": decode_events,
-        },
-        "LiquidateBorrow": {
-            "contract_event": venus_token.events.LiquidateBorrow,
-            "field_names": [
-                "block_number",
-                "timestamp",
-                "tx_hash",
-                "log_index",
-                "token_name",
-                "deposit_address",
-                "minter_address",
-            ],
-            "decode_function": decode_events,
-        },
-        "RepayBorrow": {
-            "contract_event": venus_token.events.RepayBorrow,
-            "field_names": [
-                "block_number",
-                "timestamp",
-                "tx_hash",
-                "log_index",
-                "token_name",
-                "deposit_address",
-                "minter_address",
-            ],
-            "decode_function": decode_events,
+                "cash_prior",
+                "interest_accumulated",
+                "borrow_index",
+                "total_borrows",
+                "borrow_rate_per_block",
+                "supply_rate_per_block",
+                "total_borrow",
+                "total_supply",
+    ],
+            "decode_function": decode_accrue_interest_events,
         },
     }
 
@@ -200,15 +154,7 @@ def fetch_events_to_csv(
 
     Creates couple of CSV files with the event data:
 
-    - `/tmp/venus-mint.csv`
-
-    - `/tmp/venus-redeem.csv`
-
-    - `/tmp/venus-borrow.csv`
-
-    - `/tmp/venus-liquidateborrow.csv`
-
-    - `/tmp/venus-repayborrow.csv`
+    - `/tmp/venus-accrueinterest.csv`
 
     A progress bar and estimation on the completion is rendered for console / Jupyter notebook using `tqdm`.
 
@@ -311,19 +257,9 @@ def fetch_events_to_csv(
             # Sync the state of updated events
             state.save_state(current_block)
 
-        # Get contracts
-        venus_token = get_contract(web3, 'venus/VBep20.json')
-
-        events = [
-            venus_token.events.Mint,
-            venus_token.events.Redeem,
-            venus_token.events.Borrow,
-            venus_token.events.LiquidateBorrow,
-            venus_token.events.RepayBorrow,
-        ]
-
+        # Prepare filter so that only vtoken address are monitored
         addresses = [t.deposit_address for t in VENUS_NETWORKS['bsc'].token_contracts.values()]
-        flter = prepare_filter(events)
+        flter = prepare_filter(contract_events)
         flter.contract_address = addresses
 
         # Read specified events in block range
@@ -336,6 +272,7 @@ def fetch_events_to_csv(
             chunk_size=100,
             context=token_cache,
             filter=flter,
+            extract_timestamps=extract_timestamps_json_rpc,
         ):
             try:
                 # write to correct buffer
@@ -351,5 +288,89 @@ def fetch_events_to_csv(
     for event_name, buffer in buffers.items():
         buffer["file_handler"].close()
         log_info(f"Wrote {buffer['total']} {event_name} events")
+
+
+def fetch_events_to_dataframe(
+    json_rpc_url: str,
+    state: ScanState,
+    start_block: int = 12_766_328, # TRX created
+    end_block: int = 12_766_328 + 1_000,
+    output_folder: str = "/tmp",
+    max_workers: int = 16,
+    log_info=print,
+) -> DataFrame:
+    '''
+
+    :return:
+    '''
+
+    # Setup
+    token_cache = TokenCache()
+    http_adapter = HTTPAdapter(pool_connections=max_workers, pool_maxsize=max_workers)
+    web3_factory = TunedWeb3Factory(json_rpc_url, http_adapter)
+    web3 = web3_factory(token_cache)
+    executor = create_thread_pool_executor(web3_factory, token_cache, max_workers=max_workers)
+
+    # Start scanning
+    restored, restored_start_block = state.restore_state(start_block)
+    original_block_range = end_block - start_block
+
+    if restored:
+        log_info(
+            f"Restored previous scan state, data until block {restored_start_block:,}, we are skipping {restored_start_block - start_block:,} blocks out of {original_block_range:,} total")
+    else:
+        log_info(
+            f"No previous scan done, starting fresh from block {start_block:,}, total {original_block_range:,} blocks", )
+
+    log_info(f"Scanning block range {restored_start_block:,} - {end_block:,}")
+    with tqdm(total=end_block - restored_start_block) as progress_bar:
+        def update_progress(
+            current_block,
+            start_block,
+            end_block,
+            chunk_size: int,
+            total_events: int,
+            last_timestamp: int,
+            context: TokenCache,
+        ):
+            if last_timestamp:
+                # Display progress with the date information
+                d = datetime.datetime.utcfromtimestamp(last_timestamp)
+                formatted_time = d.strftime("%Y-%m-%d")
+                progress_bar.set_description(f"Block: {current_block:,}, events: {total_events:,}, time:{formatted_time}")
+            else:
+                progress_bar.set_description(f"Block: {current_block:,}, events: {total_events:,}")
+
+            progress_bar.update(chunk_size)
+
+            # Sync the state of updated events
+            state.save_state(current_block)
+
+        # Prepare filter so that only vtoken address are monitored
+        venus_token = get_contract(web3, "venus/VBep20.json")
+        contract_events = [venus_token.events.AccrueInterest]
+        addresses = [t.deposit_address for t in VENUS_NETWORKS['bsc'].token_contracts.values()]
+        flter = prepare_filter(contract_events)
+        flter.contract_address = addresses
+
+        out = []
+        # Read specified events in block range
+        for log_result in read_events_concurrent(
+            executor,
+            restored_start_block,
+            end_block,
+            events=contract_events,
+            notify=update_progress,
+            chunk_size=100,
+            context=token_cache,
+            filter=flter,
+            extract_timestamps=extract_timestamps_json_rpc, #extract_timestamps_json_rpc,
+        ):
+            try:
+                out.append(decode_accrue_interest_events(log_result))
+            except Exception as e:
+                raise RuntimeError(f"Could not decode {log_result}") from e
+
+    return DataFrame.from_records(out)
 
 

@@ -4,9 +4,13 @@ import os
 from typing import NamedTuple, Optional
 from web3 import Web3
 from eth_typing import ChecksumAddress
+from eth_defi.abi import get_deployed_contract
+from web3.contract import Contract
+from eth_typing import HexAddress
 
 # Deployed Contracts on BSC:
 # https://github.com/VenusProtocol/venus-config/blob/master/networks/mainnet.json
+
 
 class VenusNetwork(NamedTuple):
     # Network name

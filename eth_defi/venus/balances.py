@@ -16,16 +16,6 @@ from eth_defi.gas import estimate_gas_fees, apply_gas
 from eth_defi.confirmation import broadcast_and_wait_transactions_to_complete
 
 logger = logging.getLogger(__name__)
-_cache = {}
-
-
-def get_venus_deployed_contract(web3:Web3, contract_address: HexAddress) -> Contract:
-    if contract_address in _cache:
-        return _cache[contract_address]
-
-    contract = get_deployed_contract(web3, "venus/VBep20.json", contract_address)
-    _cache[contract_address] = contract
-    return contract
 
 
 def venus_get_exchange_rate(web3: Web3, venus_token: VenusToken) -> Decimal:
@@ -36,16 +26,14 @@ def venus_get_exchange_rate(web3: Web3, venus_token: VenusToken) -> Decimal:
     :param venus_token:
     """
 
-    deposit_address = Web3.toChecksumAddress(venus_token.deposit_address)
-    contract = get_venus_deployed_contract(web3, deposit_address)
+    contract = get_deployed_contract(web3, "venus/VBep20.json", venus_token.deposit_address)
     result = contract.functions.exchangeRateCurrent().call()
     return Decimal(result) / WAD
 
 
 def venus_get_venus_token_balance(web3: Web3, venus_token: VenusToken, account_address: str) -> Decimal:
 
-    deposit_address = Web3.toChecksumAddress(venus_token.deposit_address)
-    contract = get_venus_deployed_contract(web3, deposit_address)
+    contract = get_deployed_contract(web3, "venus/VBep20.json", venus_token.deposit_address)
     result = contract.functions.balanceOf(account_address).call()
     return Decimal(result) / venus_token_decimals
 
@@ -59,8 +47,7 @@ def venus_get_deposit_balance(web3: Web3, venus_token: VenusToken, account_addre
     :return:
     """
     # Use the vToken contract to read the account's current deposit balance in the specified currency reserve
-    deposit_address = Web3.toChecksumAddress(venus_token.deposit_address)
-    contract = get_venus_deployed_contract(web3, deposit_address)
+    contract = get_deployed_contract(web3, "venus/VBep20.json", venus_token.deposit_address)
     result = contract.functions.balanceOfUnderlying(account_address).call()
     return Decimal(result) / ulyToken_decimals
 
@@ -75,15 +62,14 @@ def venus_get_borrow_balance(web3: Web3, venus_token: VenusToken, account_addres
     """
     # Use the vToken contract to read the account's current borrow balance in the specified currency reserve
     deposit_address = Web3.toChecksumAddress(venus_token.deposit_address)
-    contract = get_venus_deployed_contract(web3, deposit_address)
+    contract = get_deployed_contract(web3, "venus/VBep20.json", deposit_address)
     result = contract.functions.borrowBalanceCurrent(account_address).call()
     return Decimal(result) / ulyToken_decimals
 
 
 def venus_deposit(web3: Web3, hot_wallet: HotWallet, venus_token: VenusToken, deposit_amount: Decimal) -> bool:
 
-    deposit_address = Web3.toChecksumAddress(venus_token.deposit_address)
-    venus_contract = get_venus_deployed_contract(web3, deposit_address)
+    venus_contract = get_deployed_contract(web3, "venus/VBep20.json", venus_token.deposit_address)
     gas_fees = estimate_gas_fees(web3)
 
     # 区分是否是wbnb
@@ -125,11 +111,11 @@ def venus_deposit(web3: Web3, hot_wallet: HotWallet, venus_token: VenusToken, de
             return False
 
         # 检查授权是否足够，如果未授权，则自动授权
-        allowance = underlying_contract.functions.allowance(hot_wallet.address, deposit_address).call() / ulyToken_decimals
+        allowance = underlying_contract.functions.allowance(hot_wallet.address, venus_token.deposit_address).call() / ulyToken_decimals
         if deposit_amount > allowance:
             logger.warning("授权{}的数量：{}，小于待存入的数量：{}".format(token_name, allowance, deposit_amount))
 
-            tx = underlying_contract.functions.approve(deposit_address, unlimited).buildTransaction(
+            tx = underlying_contract.functions.approve(venus_token.deposit_address, unlimited).buildTransaction(
                 {
                     "from": hot_wallet.address,
                     "chainId": web3.eth.chain_id,

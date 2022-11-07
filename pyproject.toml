@@ -14,7 +14,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
-web3 = {extras = ["tester"], version = "^5.28.0"}
+web3 = {extras = ["tester"], version = "^5.31.0"}
 Sphinx = {version = "^4.4.0", optional = true}
 sphinx-rtd-theme = {version = "^1.0.0", optional = true}
 sphinx-sitemap = {version = "^2.2.0", optional = true}
@@ -31,11 +31,13 @@ jupyter = {version = "^1.0.0", optional = true}
 matplotlib = {version = "^3.5.2", optional = true}
 plotly = {version = "^5.8.2", optional = true}
 furo = {version = "^2022.6.4.1", optional = true}
+retry = "^0.9.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 pytest-mock = "^3.7.0"
 pytest-env = "^0.6.0"
+pytest-asyncio = "^0.20.1"
 sphinx-rtd-theme = "^1.0.0"
 sphinx-sitemap = "^2.2.0"
 ipdb = "^0.13.9"
