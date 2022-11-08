@@ -73,16 +73,18 @@ def decode_accrue_interest_events(log: LogResult) -> dict:
     # Chop data blob to byte32 entries
     data_entries = decode_data(log["data"])
 
-    cash_prior = convert_int256_bytes_to_int(data_entries[0])
-    interest_accumulated = convert_int256_bytes_to_int(data_entries[1])
+    #cash_prior = convert_int256_bytes_to_int(data_entries[0])
+    #interest_accumulated = convert_int256_bytes_to_int(data_entries[1])
     borrow_index = convert_int256_bytes_to_int(data_entries[2])
-    total_borrows = convert_int256_bytes_to_int(data_entries[3])
+    #total_borrows = convert_int256_bytes_to_int(data_entries[3])
 
     # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
     borrow_rate_per_block = contract.functions.borrowRatePerBlock().call(block_identifier=block_number)
     supply_rate_per_block = contract.functions.supplyRatePerBlock().call(block_identifier=block_number)
-    total_borrow = contract.functions.totalBorrowsCurrent().call(block_identifier=block_number)
-    total_supply = contract.functions.totalSupply().call(block_identifier=block_number)
+
+    total_borrows = contract.functions.totalBorrows().call(block_identifier=block_number)
+    total_reserves = contract.functions.totalReserves().call(block_identifier=block_number)
+    cash = contract.functions.getCash().call(block_identifier=block_number)
 
     data = {
         "block_number": block_number,
@@ -90,19 +92,19 @@ def decode_accrue_interest_events(log: LogResult) -> dict:
         "tx_hash": log["transactionHash"],
         "log_index": int(log["logIndex"], 16),
         "token": token_name,
-
-        # event data used to backward calc accrued rates/interests
         "deposit_address": deposit_address,
-        "cash_prior": cash_prior,
-        "interest_accumulated": interest_accumulated,
+
+        #"cash_prior": cash_prior,
+        #"interest_accumulated": interest_accumulated,
         "borrow_index": borrow_index,
-        "total_borrows": total_borrows,
 
         # below is forward rates read directly from the chain:
         "borrow_rate_per_block": borrow_rate_per_block,
         "supply_rate_per_block": supply_rate_per_block,
-        "total_borrow": total_borrow,
-        "total_supply": total_supply,
+        "total_borrows": total_borrows,
+        "total_reserves": total_reserves,
+        "cash": cash,
+
     }
     return data
 
@@ -127,14 +129,14 @@ def get_event_mapping(web3: Web3) -> dict:
                 "log_index",
                 "token",
                 "deposit_address",
-                "cash_prior",
-                "interest_accumulated",
+                #"cash_prior",
+                #"interest_accumulated",
                 "borrow_index",
-                "total_borrows",
                 "borrow_rate_per_block",
                 "supply_rate_per_block",
-                "total_borrow",
-                "total_supply",
+                "total_borrows",
+                "total_reserves",
+                "cash",
     ],
             "decode_function": decode_accrue_interest_events,
         },

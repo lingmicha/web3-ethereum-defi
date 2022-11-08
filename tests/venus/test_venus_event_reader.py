@@ -109,10 +109,12 @@ def test_read_events():
     assert e["log_index"] == 197
     assert e['token'] == 'WBNB'
     assert e['deposit_address'] == '0xA07c5b74C9B40447a954e1466938b865b6BBea36'
-    assert e['cash_prior'] == 1197764111486000889186443
-    assert e['interest_accumulated'] == 62298090010179021
     assert e['borrow_index'] == 1174708111983875926
-    assert e['total_borrows'] == 228555595581217444474727
+    assert e['borrow_rate_per_block'] == 1829348130
+    assert e['supply_rate_per_block'] == 234523741
+    assert e['total_borrows'] == 228555350454798399462476
+    assert e['total_reserves'] == 85247367568144551221
+    assert e['cash'] == 1197764356612419934198694
 
     e = out[1]
     assert e["block_number"] == 22629324
@@ -121,10 +123,12 @@ def test_read_events():
     assert e["log_index"] == 126
     assert e['token'] == 'WBNB'
     assert e['deposit_address'] == '0xA07c5b74C9B40447a954e1466938b865b6BBea36'
-    assert e['cash_prior'] == 1197764356612419934198694
-    assert e['interest_accumulated'] == 1254321908867940
     assert e['borrow_index'] == 1174708118430726189
+    assert e['borrow_rate_per_block'] == 1829348126
     assert e['total_borrows'] == 228555351709120308330416
+    assert e['total_reserves'] == 85247618432526324809
+    assert e['cash'] == 1197764366612419934198694
+
 
 def test_read_events_failed_case_1():
     """Read events quickly over JSON-RPC API."""
@@ -180,10 +184,11 @@ def test_read_events_failed_case_1():
     assert e["log_index"] == 155
     assert e['token'] == 'USDC'
     assert e['deposit_address'] == '0xecA88125a5ADbe82614ffC12D0DB554E2e2867C8'
-    assert e['cash_prior'] == 14779694531549214423178220
-    assert e['interest_accumulated'] == 106412221786647640933
-    assert e['borrow_index'] == 1122880921630450768
+    assert e['borrow_rate_per_block'] == 5352776277
+    assert e['supply_rate_per_block'] == 3925900679
     assert e['total_borrows'] == 65064505765622195623511139
+    assert e['total_reserves'] == 12114617303311774371055
+    assert e['cash'] == 14788693531549214423178220
 
 
 def test_read_events_concurrent():
@@ -208,8 +213,8 @@ def test_read_events_concurrent():
     flter = prepare_filter(events)
     flter.contract_address = addresses
 
-    start_block = 22629320
-    end_block = 22652473  #
+    start_block = 12_766_328
+    end_block = 12_766_328 + 1_000  #
 
     # Read through the blog ran
     out = []
@@ -226,74 +231,76 @@ def test_read_events_concurrent():
     ):
         out.append(decode_accrue_interest_events(log_result))
 
-    assert len(out) == 1883
+    assert len(out) == 238
 
     e = out[0]
-    assert e["block_number"] == 22629321
-    assert e['timestamp'] == datetime.datetime(2022, 10, 30, 17, 43, 9)
-    assert e["tx_hash"] == "0xc409991514aff4ae68f94dbce4496b0dcaac70741c23c2f1cb53f51cd23fc97d"
-    assert e["log_index"] == 197
-    assert e['token'] == 'WBNB'
-    assert e['deposit_address'] == '0xA07c5b74C9B40447a954e1466938b865b6BBea36'
-    assert e['cash_prior'] == 1197764111486000889186443
-    assert e['interest_accumulated'] == 62298090010179021
-    assert e['borrow_index'] == 1174708111983875926
-    assert e['total_borrows'] == 228555595581217444474727
+    assert e["block_number"] == 12766331
+    assert e['timestamp'] == datetime.datetime(2021, 11, 19, 2, 4, 14)
+    assert e["tx_hash"] == "0x2b62b3edab76e223137c77dd6723011b6c6c4174744a8cc785daf5e66362ba21"
+    assert e["log_index"] == 832
+    assert e['token'] == 'USDT'
+    assert e['deposit_address'] == '0xfD5840Cd36d94D7229439859C0112a4185BC0255'
+    assert e['borrow_index'] == 1090134621168291647
+    assert e['borrow_rate_per_block'] == 14875896119
+    assert e['supply_rate_per_block'] == 12140067034
+    assert e['total_borrows'] == 213420616265651700878749776
+    assert e['total_reserves'] == 2134785769793988071396465
+    assert e['cash'] == 24078654513750731053762012
 
-    e = out[1]
-    assert e["block_number"] == 22629324
-    assert e['timestamp'] == datetime.datetime(2022, 10, 30, 17, 43, 18)
-    assert e["tx_hash"] == "0x19f46db89417848ad21127c073db0debe4ef6dc821d0e9b6f82cdb555a02f3d8"
-    assert e["log_index"] == 126
-    assert e['token'] == 'WBNB'
-    assert e['deposit_address'] == '0xA07c5b74C9B40447a954e1466938b865b6BBea36'
-    assert e['cash_prior'] == 1197764356612419934198694
-    assert e['interest_accumulated'] == 1254321908867940
-    assert e['borrow_index'] == 1174708118430726189
-    assert e['total_borrows'] == 228555351709120308330416
-
-    e = out[1883]
-    assert e["block_number"] == 22652462
-    assert e["tx_hash"] == "0xf9bdb09e2ba28af8baecda74b94795306633d25275650949a2c9dbd665480897"
-    assert e["log_index"] == 281
+    e = out[237]
+    assert e["block_number"] == 12767327
+    assert e['timestamp'] == datetime.datetime(2021, 11, 19, 2, 55, 38)
+    assert e["tx_hash"] == "0x12193c1b1c37849b780b314cffd1094cd580bf4475850bdc2307fb21981a2dea"
+    assert e["log_index"] == 1312
     assert e['token'] == 'ETH'
-    assert e["deposit_address"] == Web3.toChecksumAddress("0xf508fcd89b8bd15579dc79a6827cb4686a3592c8")
-    assert e['cash_prior'] == 44299213003303609094185
-    assert e['interest_accumulated'] == 6472712823055175
-    assert e['borrow_index'] == 1082487156484500726
-    assert e['total_borrows'] == 18024473191124053920154
+    assert e['deposit_address'] == '0xf508fCD89b8bd15579dc79A6827cB4686A3592c8'
+    assert e['borrow_index'] == 1043938861499949016
+    assert e['borrow_rate_per_block'] == 3510190293
+    assert e['supply_rate_per_block'] == 474553026
+    assert e['total_borrows'] == 26403775314519717108191
+    assert e['total_reserves'] == 505873000910622841823
+    assert e['cash'] == 130345586971338864337358
 
 
 def test_fetch_events_to_dataframe():
     json_rpc_url = os.environ["BNB_CHAIN_JSON_RPC"]
     df = fetch_events_to_dataframe(
             json_rpc_url,
-            JSONFileScanState("rate_state.log"),
+            JSONFileScanState("test_fetch_events_to_dataframe.log"),
             start_block = 12_766_328,  # TRX created
             end_block = 12_766_328 + 1_000,
             output_folder = "/tmp",
             max_workers = 50,
             log_info = print
     )
-    #df.to_csv("rates.csv")
 
     assert len(df) == 238
-    assert df.iloc[0]["token"] == "USDT"
+
     assert df.iloc[0]["block_number"] == 12766331
+    assert df.iloc[0]['timestamp'] == datetime.datetime(2021, 11, 19, 2, 4, 14)
+    assert df.iloc[0]["tx_hash"] == "0x2b62b3edab76e223137c77dd6723011b6c6c4174744a8cc785daf5e66362ba21"
     assert df.iloc[0]["log_index"] == 832
-    assert df.iloc[0]["total_supply"] == 1103972950685788682
-    assert df.iloc[0]["total_borrow"] == 213420616265651700878749776
-    assert df.iloc[0]["supply_rate_per_block"] == 12140067034
-    assert df.iloc[0]["borrow_rate_per_block"] == 14875896119
+    assert df.iloc[0]['token'] == 'USDT'
+    assert df.iloc[0]['deposit_address'] == '0xfD5840Cd36d94D7229439859C0112a4185BC0255'
+    assert df.iloc[0]['borrow_index'] == 1090134621168291647
+    assert df.iloc[0]['borrow_rate_per_block'] == 14875896119
+    assert df.iloc[0]['supply_rate_per_block'] == 12140067034
+    assert df.iloc[0]['total_borrows'] == 213420616265651700878749776
+    assert df.iloc[0]['total_reserves'] == 2134785769793988071396465
+    assert df.iloc[0]['cash'] == 24078654513750731053762012
 
-    assert df.iloc[237]["token"] == "ETH"
     assert df.iloc[237]["block_number"] == 12767327
+    assert df.iloc[237]['timestamp'] == datetime.datetime(2021, 11, 19, 2, 55, 38)
+    assert df.iloc[237]["tx_hash"] == "0x12193c1b1c37849b780b314cffd1094cd580bf4475850bdc2307fb21981a2dea"
     assert df.iloc[237]["log_index"] == 1312
-    assert df.iloc[237]["total_supply"] == 773943888684807
-    assert df.iloc[237]["total_borrow"] == 26403775314519717108191
-    assert df.iloc[237]["supply_rate_per_block"] == 474553026
-    assert df.iloc[237]["borrow_rate_per_block"] == 3510190293
-
+    assert df.iloc[237]['token'] == 'ETH'
+    assert df.iloc[237]['deposit_address'] == '0xf508fCD89b8bd15579dc79A6827cB4686A3592c8'
+    assert df.iloc[237]['borrow_index'] == 1043938861499949016
+    assert df.iloc[237]['borrow_rate_per_block'] == 3510190293
+    assert df.iloc[237]['supply_rate_per_block'] == 474553026
+    assert df.iloc[237]['total_borrows'] == 26403775314519717108191
+    assert df.iloc[237]['total_reserves'] == 505873000910622841823
+    assert df.iloc[237]['cash'] == 130345586971338864337358
 
 
 

@@ -9,7 +9,7 @@ from web3.contract import Contract
 from eth_typing import HexAddress
 
 from eth_defi.abi import get_deployed_contract
-from .rates import ulyToken_decimals, venus_token_decimals, WAD, unlimited
+from .rates import ulyToken_decimals, venus_token_decimals, WAD, unlimited, VenusInterestModelParameters
 from eth_defi.venus.constants import venus_get_token_name_by_deposit_address, VenusNetwork, VenusToken
 from eth_defi.hotwallet import HotWallet
 from eth_defi.gas import estimate_gas_fees, apply_gas
