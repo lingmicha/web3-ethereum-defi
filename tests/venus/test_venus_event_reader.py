@@ -18,6 +18,7 @@ import datetime
 from requests.adapters import HTTPAdapter
 from web3 import HTTPProvider, Web3
 from pandas import DataFrame
+import numpy as np
 
 from eth_defi.abi import get_contract
 from eth_defi.event_reader.fast_json_rpc import patch_web3
@@ -270,14 +271,14 @@ def test_fetch_events_to_dataframe():
             start_block = 12_766_328,  # TRX created
             end_block = 12_766_328 + 1_000,
             output_folder = "/tmp",
-            max_workers = 50,
+            max_workers = 16,
             log_info = print
     )
 
     assert len(df) == 238
+    assert df.index[0] == datetime.datetime(2021, 11, 19, 2, 4, 14)
 
     assert df.iloc[0]["block_number"] == 12766331
-    assert df.iloc[0]['timestamp'] == datetime.datetime(2021, 11, 19, 2, 4, 14)
     assert df.iloc[0]["tx_hash"] == "0x2b62b3edab76e223137c77dd6723011b6c6c4174744a8cc785daf5e66362ba21"
     assert df.iloc[0]["log_index"] == 832
     assert df.iloc[0]['token'] == 'USDT'
@@ -285,12 +286,12 @@ def test_fetch_events_to_dataframe():
     assert df.iloc[0]['borrow_index'] == 1090134621168291647
     assert df.iloc[0]['borrow_rate_per_block'] == 14875896119
     assert df.iloc[0]['supply_rate_per_block'] == 12140067034
-    assert df.iloc[0]['total_borrows'] == 213420616265651700878749776
-    assert df.iloc[0]['total_reserves'] == 2134785769793988071396465
-    assert df.iloc[0]['cash'] == 24078654513750731053762012
+    assert int(df.iloc[0]['total_borrows']) == 213420616265651700878749776
+    assert int(df.iloc[0]['total_reserves']) == 2134785769793988071396465
+    assert int(df.iloc[0]['cash']) == 24078654513750731053762012
 
+    assert df.index[237] == datetime.datetime(2021, 11, 19, 2, 55, 38)
     assert df.iloc[237]["block_number"] == 12767327
-    assert df.iloc[237]['timestamp'] == datetime.datetime(2021, 11, 19, 2, 55, 38)
     assert df.iloc[237]["tx_hash"] == "0x12193c1b1c37849b780b314cffd1094cd580bf4475850bdc2307fb21981a2dea"
     assert df.iloc[237]["log_index"] == 1312
     assert df.iloc[237]['token'] == 'ETH'
@@ -298,9 +299,9 @@ def test_fetch_events_to_dataframe():
     assert df.iloc[237]['borrow_index'] == 1043938861499949016
     assert df.iloc[237]['borrow_rate_per_block'] == 3510190293
     assert df.iloc[237]['supply_rate_per_block'] == 474553026
-    assert df.iloc[237]['total_borrows'] == 26403775314519717108191
-    assert df.iloc[237]['total_reserves'] == 505873000910622841823
-    assert df.iloc[237]['cash'] == 130345586971338864337358
+    assert int(df.iloc[237]['total_borrows']) == 26403775314519717108191
+    assert int(df.iloc[237]['total_reserves']) == 505873000910622841823
+    assert int(df.iloc[237]['cash']) == 130345586971338864337358
 
 
 
