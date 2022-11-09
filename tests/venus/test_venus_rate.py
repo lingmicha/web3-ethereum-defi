@@ -29,6 +29,8 @@ from eth_defi.venus.rates import (
     venus_calculate_mean_return,
     venus_calculate_per_block_return,
     venus_calculate_accrued_interests,
+    venus_deposit_depth_analysis,
+    venus_get_current_interest_parameters,
 )
 
 logger = logging.getLogger(__name__)
@@ -246,6 +248,8 @@ def test_venus_calculate_accrued_interests(venus_wbnb_token: VenusToken):
                                                  'WBNB')
 
     ## 把平均利率的计算结果和使用borrowIndex计算结果相比较
+
+    # Case 1: delta time 小于 1天
     # 起始：block_number:22629321  block_time:2022-10-30 17:43:09  borrow_index:1174708111983875926
     # 结束：block_number:22638543  block_time:2022-10-31 01:28:45  borrow_index:1174727930902663238
     start_borrow_index = Decimal(1174708111983875926)
@@ -256,3 +260,23 @@ def test_venus_calculate_accrued_interests(venus_wbnb_token: VenusToken):
 
     assert interest.borrow_interest == \
            pytest.approx(expected_borrow_interest, rel=Decimal(1e-2))
+
+    # Case 2: delta time = 4天
+    # VBUSD：
+    # 起始：block_number:22629321  block_time:2022-10-30 17:43:09  borrow_index:1174708111983875926
+    # 结束：block_number:22638543  block_time:2022-10-31 01:28:45  borrow_index:1174727930902663238
+
+
+    # case 3: delta time = 91天
+
+
+def test_venus_deposit_depth_analysis(web3:Web3, venus_busd_token:VenusToken):
+
+    rates = venus_get_current_interest_parameters(web3, venus_busd_token)
+
+    analysis = venus_deposit_depth_analysis(rates, venus_busd_token)
+
+    assert analysis.borrow_apr > Decimal(0.005)
+    assert analysis.supply_apr > Decimal(0.005)
+    assert analysis.plus_one_pct_borrow_apr > Decimal(10)
+    assert analysis.minus_one_pct_supply_apr > Decimal(10)

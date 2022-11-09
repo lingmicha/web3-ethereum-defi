@@ -31,7 +31,7 @@ class VenusInterestModel:
 
         if borrows == Decimal(0):
             return Decimal(0)
-        return borrows / (borrows + cash - reserves)
+        return Decimal(borrows / (borrows + cash - reserves))
 
     def borrow_rate_per_block(self, cash:Decimal, borrows:Decimal, reserves:Decimal) -> Decimal:
         pass

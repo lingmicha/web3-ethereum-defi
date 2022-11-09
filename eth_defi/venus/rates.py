@@ -6,11 +6,12 @@ import os
 import logging
 import datetime
 from decimal import Decimal
-from typing import NamedTuple, Tuple, Union, List
+from typing import NamedTuple, Tuple, Union, List, Optional
+from retry import retry
 
 import numpy as np
 from pandas import (DataFrame, Timedelta, pandas)
-from web3 import Web3
+from web3 import Web3,exceptions
 from scipy.optimize import bisect
 
 from eth_defi.abi import get_deployed_contract
@@ -35,6 +36,10 @@ WAD = Decimal(10**18)  # 10 to the power 18
 # Constants for
 venus_token_decimals = Decimal(10**8)
 ulyToken_decimals = Decimal(10**18)
+
+DAYS_PER_YEAR = Decimal(365)
+BLOCKS_PER_DAY = Decimal(20 * 60 * 24)  # BSC block rate
+BLOCKS_PER_YEAR = Decimal(20 * 60 * 24 * 365)
 
 # Constants
 unlimited = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff # 2^256-1
@@ -121,18 +126,6 @@ def venus_filter_by_token(df: DataFrame, token: str) -> DataFrame:
     return df.loc[df['token'] == token]
 
 
-# def venus_filter_by_date_range(df: DataFrame, start_time: datetime, end_time: datetime = None, token: str = '') -> DataFrame:
-#     """
-#     Filter the DataFrame by date range suitable for interest calculation (loan start to loan end time)
-#     The DataFrame must be indexed by timestamp.
-#     If token is specified, also filters by token.
-#     """
-#     if end_time:
-#         return venus_filter_by_token(df, token).query('timestamp >= @start_time and timestamp <= @end_time')
-#     else:
-#         return venus_filter_by_token(df, token).query('timestamp >= @start_time')
-
-
 def venus_calculate_per_block_return(df: DataFrame) -> DataFrame:
     """
     Calculate APR and APY columns for Venus DataFrame previously generated from the blockchain events.
@@ -142,20 +135,17 @@ def venus_calculate_per_block_return(df: DataFrame) -> DataFrame:
     # BNB APR = (Rate Per Block / BNB Mantissa * Blocks Per Year) * 100
     # BNB APY = (((Rate Per Block / BNB Mantissa * Blocks Per Day + 1) ^ Days Per Year - 1)) * 100
 
-    days_per_year = 365
-    blocks_per_day = 20 * 60 * 24 # BSC block rate
-    blocks_per_year = blocks_per_day * days_per_year
 
     df = df.assign(
         borrow_apr =df['borrow_rate_per_block'].apply(
-            lambda value: ((Decimal(value) / ulyToken_decimals) * Decimal(blocks_per_year)) * 100),
+            lambda value: ((Decimal(value) / ulyToken_decimals) * BLOCKS_PER_YEAR) ),
         deposit_apr=df['supply_rate_per_block'].apply(
-            lambda value: ((Decimal(value) / ulyToken_decimals) * Decimal(blocks_per_year)) * 100),
+            lambda value: ((Decimal(value) / ulyToken_decimals) * BLOCKS_PER_YEAR) ),
 
         borrow_apy=df['borrow_rate_per_block'].apply(
-            lambda value: ((((Decimal(value) / ulyToken_decimals) * Decimal(blocks_per_day) + 1) ** Decimal(days_per_year)) -1) * 100),
+            lambda value: ((((Decimal(value) / ulyToken_decimals) * BLOCKS_PER_DAY + 1) ** DAYS_PER_YEAR) -1) ),
         deposit_apy=df['supply_rate_per_block'].apply(
-            lambda value: ((((Decimal(value) / ulyToken_decimals) * Decimal(blocks_per_day) + 1) ** Decimal(days_per_year)) -1) * 100),
+            lambda value: ((((Decimal(value) / ulyToken_decimals) * BLOCKS_PER_DAY + 1) ** DAYS_PER_YEAR) -1) ),
     )
 
     return df
@@ -207,7 +197,19 @@ def venus_calculate_accrued_interests(df: DataFrame, start_time: datetime, end_t
     assert end_time <= df.index[-1], "DataFrame应包含计算的结束时间"
     assert start_time <= end_time, "DataFrame应包含计算的结束时间"
 
-    df = venus_calculate_mean_return(df, '1S', ["deposit_apr", "borrow_apr"], token)
+    actual_start_time = df.index[0]
+    actual_end_time = df.index[-1]
+    delta_time = actual_end_time - actual_start_time
+    full_year = datetime.timedelta(days=365)
+
+    if delta_time < datetime.timedelta(days=3):
+        time_bucket = '3S'
+    elif delta_time < datetime.timedelta(days=90):
+        time_bucket = '1min'
+    else:
+        time_bucket = '1D'
+
+    df = venus_calculate_mean_return(df, time_bucket, ["deposit_apr", "borrow_apr"], token)
     df = df.loc[start_time:end_time]
     if len(df) <= 0:
         raise ValueError('No data found in date range %s - %s' % (start_time, end_time))
@@ -216,39 +218,8 @@ def venus_calculate_accrued_interests(df: DataFrame, start_time: datetime, end_t
     average_deposit_apr = df["deposit_apr"].mean()
     average_borrow_apr = df["borrow_apr"].mean()
 
-    actual_start_time = df.index[0]
-    actual_end_time = df.index[-1]
-    delta_time = actual_end_time - actual_start_time
-    full_year = datetime.timedelta(days=365)
-
-    deposit_interest = Decimal(float(amount) * average_deposit_apr * delta_time / full_year / 100)
-    borrow_interest = Decimal(float(amount) * average_borrow_apr * delta_time / full_year / 100)
-
-    # 计算区间内的deposit_index
-    # df['deposit_index_delta'] = df['borrow_index'] - df['borrow_index'].shift(periods=1).fillna(Decimal(0))
-    # df['deposit_index_delta'] = df.apply(
-    #     lambda value: Decimal(value['deposit_index_delta']) * Decimal(value['utilization']),
-    #     axis=1)
-    # df['deposit_index'] = df['deposit_index_delta'].cumsum()
-    #
-    # # Loan starts on first row of the DataFrame
-    # actual_start_time = df.index[0]
-    # start_borrow_index = Decimal(int(df['borrow_index'][0]))
-    # start_deposit_index = Decimal(df['deposit_index'][0])
-    #
-    # # Loan ends on last row of the DataFrame
-    # actual_end_time = df.index[-1]
-    # end_borrow_index = Decimal(int(df['borrow_index'][-1]))
-    # end_deposit_index = Decimal(df['deposit_index'][-1])
-    #
-    # # Calculate interest for deposit.
-    # deposit_scaled_amount = amount / start_deposit_index
-    # deposit_final_amount = deposit_scaled_amount * end_deposit_index
-    # deposit_interest = deposit_final_amount - amount
-    #
-    # borrow_scaled_amount = amount / start_borrow_index
-    # borrow_final_amount = borrow_scaled_amount * end_borrow_index
-    # borrow_interest = borrow_final_amount - amount
+    deposit_interest = Decimal(float(amount) * average_deposit_apr * (delta_time / full_year) )
+    borrow_interest = Decimal(float(amount) * average_borrow_apr * (delta_time / full_year) )
 
     return VenusAccruedInterest(
         actual_start_time=actual_start_time,
@@ -258,36 +229,127 @@ def venus_calculate_accrued_interests(df: DataFrame, start_time: datetime, end_t
     )
 
 
+class VenusInterestParameters(NamedTuple):
+    total_borrows: Decimal
+    total_reserves: Decimal
+    cash: Decimal
+    borrow_rate_per_block: Decimal
+    supply_rate_per_block: Decimal
+
+
 class VenusDepthAnalysis(NamedTuple):
-    # The first interest event found in the given date range
-    actual_start_time: datetime.datetime
 
-    # The last interest event found in the given date range
-    actual_end_time: datetime.datetime
+    borrow_apr: Decimal
+    # delta borrow amount from current level
+    plus_one_pct_borrow_apr: Decimal    # Rate+1%
+    plus_five_pct_borrow_apr: Decimal    # Rate+5%
+    plus_ten_pct_borrow_apr: Decimal     # Rate+10%
+    plus_fifteen_pct_borrow_apr: Decimal  # Rate+15%
+    plus_twenty_pct_borrow_apr: Decimal  # Rate+20%
 
-    # Calculated interest for deposit of specified amount
-    deposit_interest: Decimal
+    supply_apr: Decimal
+    # delta supply amount from current level
+    minus_one_pct_supply_apr: Decimal  ## Rate-1%
+    minus_five_pct_supply_apr: Decimal  ## Rate-5%
+    minus_ten_pct_supply_apr: Decimal   ## Rate-10%
+    minus_fifteen_pct_supply_apr: Decimal ## Rate-15%
+    minus_twenty_pct_supply_apr: Decimal ## Rate-20%
 
-    # Calculated interest for a borrow loan of specified amount
-    borrow_interest: Decimal
 
+@retry(exceptions.BadFunctionCallOutput, tries=5, delay=2)
+def venus_get_current_interest_parameters(web3: Web3, venus_token: VenusToken) -> VenusInterestParameters:
 
-def venus_deposit_depth_analysis(web3: Web3, venus_token: VenusToken, target_amount: Decimal) -> VenusDepthAnalysis:
-    """给定存取或者借出的token数量，计算存取/借出后的利率
-        同时计算现有利率下，5%，10%，20%，50%，100%利率变动所承载的存取/借出金额
-    """
-    contract = get_deployed_contract(web3, "VBep20.json", venus_token.deposit_address)
+    contract = get_deployed_contract(web3, "venus/VBep20.json", venus_token.deposit_address)
 
     # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
-    borrow_rate_per_block = contract.functions.borrowRatePerBlock().call() # 2957813543
-    supply_rate_per_block = contract.functions.supplyRatePerBlock().call() # 174984816
+    borrow_rate_per_block = contract.functions.borrowRatePerBlock().call()
+    borrow_rate_per_block = Decimal(borrow_rate_per_block) / ulyToken_decimals
 
-    total_borrow = contract.functions.totalBorrowsCurrent().call()  # 3124653038953932474258414
-    total_supply = contract.functions.totalSupply().call()  # 209539053430583173
-    total_reserve = contract.functions.totalReserves().call()  # 1951135653323763085666
-    cash = contract.functions.getCash().call()  # 39130751880398368732080648
+    supply_rate_per_block = contract.functions.supplyRatePerBlock().call()
+    supply_rate_per_block = Decimal(supply_rate_per_block) / ulyToken_decimals
 
-    model = venus_token.model
+    total_borrows = contract.functions.totalBorrows().call()
+    total_borrows = Decimal(total_borrows)/ulyToken_decimals
+
+    total_reserves = contract.functions.totalReserves().call()
+    total_reserves = Decimal(total_reserves)/ulyToken_decimals
+
+    cash = contract.functions.getCash().call()
+    cash = Decimal(cash)/ulyToken_decimals
+
+    return VenusInterestParameters(
+        total_borrows=total_borrows,
+        total_reserves=total_reserves,
+        cash=cash,
+        borrow_rate_per_block=borrow_rate_per_block,
+        supply_rate_per_block=supply_rate_per_block,
+    )
+
+
+def venus_deposit_depth_analysis(interest_params: VenusInterestParameters, venus_token: VenusToken) -> VenusDepthAnalysis:
+    """ 在现有的利率水平和参数(cash/reserves/borrows)下，
+        计算存取利率下降1%/5%/10%/15%/20%时额外需存入的token数量；
+        计算借款利率上升1%/5%/10%/15%/20%时额外借出的token数量；
+    """
+
+    interest_model = venus_token.model
+    target_borrow_changes = np.array([Decimal(0.01), Decimal(0.05), Decimal(0.1), Decimal(0.15), Decimal(0.2)])
+    target_supply_changes = np.array([Decimal(-0.01), Decimal(-0.05), Decimal(-0.1), Decimal(-0.15), Decimal(-0.2)])
+    delta_borrow = np.zeros(len(target_borrow_changes))
+    delta_supply = np.zeros(len(target_supply_changes))
+
+    # 利用二分法查找： 借款利息增加时，对应增加的借款数量
+    target_borrow_rates = target_borrow_changes/BLOCKS_PER_YEAR + interest_params.borrow_rate_per_block
+
+    # TODO: 防止利率过大无法达成：目前来看好像利率都可以超过100%，故不太成为问题
+
+    for i, target_borrow_rate in enumerate(target_borrow_rates):
+        def f(delta_borrow):
+            new_rate = interest_model.borrow_rate_per_block(
+                interest_params.cash - Decimal(delta_borrow), # cash
+                interest_params.total_borrows + Decimal(delta_borrow), # borrow
+                interest_params.total_reserves)
+            return float(new_rate - target_borrow_rate)
+
+        root = bisect(f, 0, float(interest_params.cash))
+        delta_borrow[i] = Decimal(root)
+
+    # 利用二分法查找： 存款利息减少时，对应增加的存款数量
+    target_supply_rates = target_supply_changes/BLOCKS_PER_YEAR + interest_params.supply_rate_per_block
+
+    # 给定一个极小的利率，防止不能converge
+    # BaseRatePerBlock有可能为零，故额外加一个很小的利率(年化0.1%)
+    target_supply_rates[target_supply_rates < Decimal(0)] = \
+        interest_model.params.base_rate_per_block + Decimal(0.001)/BLOCKS_PER_YEAR
+
+    for i, target_supply_rate in enumerate(target_supply_rates):
+        def f(delta_supply):
+            new_rate = interest_model.supply_rate_per_block(
+                interest_params.cash + Decimal(delta_supply), # cash
+                interest_params.total_borrows, # borrow
+                interest_params.total_reserves)
+            return float(target_supply_rate - new_rate)
+
+        root = bisect(f, 0, float(interest_params.cash + interest_params.total_borrows) * 100)
+        delta_supply[i] = Decimal(root)
+
+    return VenusDepthAnalysis(
+        borrow_apr=interest_params.borrow_rate_per_block * BLOCKS_PER_YEAR,
+        # delta borrow amount from current level
+        plus_one_pct_borrow_apr=delta_borrow[0],  # Rate+1%
+        plus_five_pct_borrow_apr=delta_borrow[1],  # Rate+5%
+        plus_ten_pct_borrow_apr=delta_borrow[2],  # Rate+10%
+        plus_fifteen_pct_borrow_apr=delta_borrow[3],  # Rate+15%
+        plus_twenty_pct_borrow_apr=delta_borrow[4],  # Rate+20%
+
+        supply_apr=interest_params.supply_rate_per_block * BLOCKS_PER_YEAR,
+        # delta supply amount from current level
+        minus_one_pct_supply_apr=delta_supply[0],  ## Rate-1%
+        minus_five_pct_supply_apr=delta_supply[1],  ## Rate-5%
+        minus_ten_pct_supply_apr=delta_supply[2],  ## Rate-10%
+        minus_fifteen_pct_supply_apr=delta_supply[3],  ## Rate-15%
+        minus_twenty_pct_supply_apr=delta_supply[4],  ## Rate-20%
+    )
 
 
 
