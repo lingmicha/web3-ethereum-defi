@@ -1,22 +1,5 @@
 """
- Venus Rates Calculation
-
-    Jump Interest Model:
-    - modle parameter:
-        baseRatePerBlock
-        multiplierPerBlock
-        jumpMultiplierPerBlock
-        kink
-        reserve_factor
-    - utilization_rate: `borrows / (cash + borrows - reserves)`
-    - borrow_rate_per_block:
-        utilization_rate < kink: utilization_rate * multiplierPerBlock/1e18 + baseRatePerBlock
-        utilization_rate >= kink: normal_rate + excess_rate
-            normal_rate = kink * multiplierPerBlock/1e18 + baseRatePerBlock
-            excess_rate = (utilization_rate - kink) * jumpMultiplierPerBlock/1e18
-    - supply_rate_per_block:
-        utilization_rate * borrow_rate_per_block * ( 1 - reserve_factor )
-
+ Venus Rates Calculation: Refer README.md
 """
 
 

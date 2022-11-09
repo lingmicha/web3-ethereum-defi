@@ -3,6 +3,8 @@ import csv
 import logging
 import datetime
 from pathlib import Path
+
+import pandas
 from tqdm.auto import tqdm
 from pandas import DataFrame
 from retry import retry
@@ -188,6 +190,10 @@ def fetch_events_to_csv(
     event_mapping = get_event_mapping(web3)
     contract_events = [event_data["contract_event"] for event_data in event_mapping.values()]
 
+    # Make sure output folder exists
+    if not Path(output_folder).exists():
+        Path(output_folder).mkdir(parents=True, exist_ok=True)
+
     # Start scanning
     restored, restored_start_block = state.restore_state(start_block)
     original_block_range = end_block - start_block
@@ -306,73 +312,18 @@ def fetch_events_to_dataframe(
     :return:
     '''
 
-    # Setup
-    token_cache = TokenCache()
-    http_adapter = HTTPAdapter(pool_connections=max_workers, pool_maxsize=max_workers)
-    web3_factory = TunedWeb3Factory(json_rpc_url, http_adapter)
-    web3 = web3_factory(token_cache)
-    executor = create_thread_pool_executor(web3_factory, token_cache, max_workers=max_workers)
+    fetch_events_to_csv(json_rpc_url,state,start_block,end_block,output_folder,max_workers,log_info,)
 
-    # Start scanning
-    restored, restored_start_block = state.restore_state(start_block)
-    original_block_range = end_block - start_block
+    restored, restored_block = state.restore_state(start_block)
+    assert restored, "ScanState not restored!"
+    assert restored_block >= end_block, "Scan not finished"
 
-    if restored:
-        log_info(
-            f"Restored previous scan state, data until block {restored_start_block:,}, we are skipping {restored_start_block - start_block:,} blocks out of {original_block_range:,} total")
-    else:
-        log_info(
-            f"No previous scan done, starting fresh from block {start_block:,}, total {original_block_range:,} blocks", )
+    event_name = "accrueInterest"
+    file_path = f"{output_folder}/venus-{event_name.lower()}.csv"
+    assert Path(file_path).exists(), "Scanned Event CSV file {} not found!".format(file_path)
 
-    log_info(f"Scanning block range {restored_start_block:,} - {end_block:,}")
-    with tqdm(total=end_block - restored_start_block) as progress_bar:
-        def update_progress(
-            current_block,
-            start_block,
-            end_block,
-            chunk_size: int,
-            total_events: int,
-            last_timestamp: int,
-            context: TokenCache,
-        ):
-            if last_timestamp:
-                # Display progress with the date information
-                d = datetime.datetime.utcfromtimestamp(last_timestamp)
-                formatted_time = d.strftime("%Y-%m-%d")
-                progress_bar.set_description(f"Block: {current_block:,}, events: {total_events:,}, time:{formatted_time}")
-            else:
-                progress_bar.set_description(f"Block: {current_block:,}, events: {total_events:,}")
+    df = pandas.read_csv(file_path, parse_dates=True, index_col="timestamp")
 
-            progress_bar.update(chunk_size)
-
-            # Sync the state of updated events
-            state.save_state(current_block)
-
-        # Prepare filter so that only vtoken address are monitored
-        venus_token = get_contract(web3, "venus/VBep20.json")
-        contract_events = [venus_token.events.AccrueInterest]
-        addresses = [t.deposit_address for t in VENUS_NETWORKS['bsc'].token_contracts.values()]
-        flter = prepare_filter(contract_events)
-        flter.contract_address = addresses
-
-        out = []
-        # Read specified events in block range
-        for log_result in read_events_concurrent(
-            executor,
-            restored_start_block,
-            end_block,
-            events=contract_events,
-            notify=update_progress,
-            chunk_size=100,
-            context=token_cache,
-            filter=flter,
-            extract_timestamps=extract_timestamps_json_rpc, #extract_timestamps_json_rpc,
-        ):
-            try:
-                out.append(decode_accrue_interest_events(log_result))
-            except Exception as e:
-                raise RuntimeError(f"Could not decode {log_result}") from e
-
-    return DataFrame.from_records(out)
+    return df
 
 

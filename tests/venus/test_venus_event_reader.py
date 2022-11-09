@@ -267,10 +267,10 @@ def test_fetch_events_to_dataframe():
     json_rpc_url = os.environ["BNB_CHAIN_JSON_RPC"]
     df = fetch_events_to_dataframe(
             json_rpc_url,
-            JSONFileScanState("test_fetch_events_to_dataframe.log"),
+            JSONFileScanState("/tmp/test_fetch_events_to_dataframe/scanstate.log"),
             start_block = 12_766_328,  # TRX created
             end_block = 12_766_328 + 1_000,
-            output_folder = "/tmp",
+            output_folder = "/tmp/test_fetch_events_to_dataframe",
             max_workers = 16,
             log_info = print
     )
