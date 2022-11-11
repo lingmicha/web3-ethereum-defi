@@ -15,3 +15,6 @@
 	path = contracts/compound-protocol
 	url = https://github.com/compound-finance/compound-protocol.git
 	branch = v2.8.1
+[submodule "wepiggy"]
+	path = contracts/wepiggy
+	url = https://github.com/WePiggy/wepiggy-contracts.git
