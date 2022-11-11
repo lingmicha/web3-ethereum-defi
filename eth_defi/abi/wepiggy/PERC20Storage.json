@@ -1,0 +1,113 @@
+{
+  "fileName": "PERC20Storage.sol",
+  "contractName": "PERC20Storage",
+  "source": "// https://github.com/compound-finance/compound-protocol/blob/master/contracts/CTokenInterfaces.sol\n//Copyright 2020 Compound Labs, Inc.\n//Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:\n//1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.\n//2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.\n//3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.\n//THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\n// SPDX-License-Identifier: MIT\npragma solidity ^0.6.0;\n\ncontract PERC20Storage {\n    /**\n     * @notice Underlying asset for this CToken\n     */\n    address public underlying;\n}\n",
+  "sourcePath": "contracts/token/PERC20Storage.sol",
+  "sourceMap": "1629:121:58:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "1629:121:58:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1722:25;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "underlying",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "ast": {
+    "absolutePath": "contracts/token/PERC20Storage.sol",
+    "exportedSymbols": {
+      "PERC20Storage": [
+        20616
+      ]
+    },
+    "id": 20617,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 20612,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "1604:23:58"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 20616,
+        "linearizedBaseContracts": [
+          20616
+        ],
+        "name": "PERC20Storage",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "documentation": {
+              "id": 20613,
+              "nodeType": "StructuredDocumentation",
+              "src": "1658:59:58",
+              "text": " @notice Underlying asset for this CToken"
+            },
+            "functionSelector": "6f307dc3",
+            "id": 20615,
+            "mutability": "mutable",
+            "name": "underlying",
+            "nodeType": "VariableDeclaration",
+            "overrides": null,
+            "scope": 20616,
+            "src": "1722:25:58",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_address",
+              "typeString": "address"
+            },
+            "typeName": {
+              "id": 20614,
+              "name": "address",
+              "nodeType": "ElementaryTypeName",
+              "src": "1722:7:58",
+              "stateMutability": "nonpayable",
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 20617,
+        "src": "1629:121:58"
+      }
+    ],
+    "src": "1604:147:58"
+  },
+  "bytecode": "0x6080604052348015600f57600080fd5b5060b98061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c80636f307dc314602d575b600080fd5b6033605f565b604051808273ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff168156fea26469706673582212208b9305cd25a68581c4a1eca1183b3842a300bdf5ea851c3a996b0cd103e66ca664736f6c634300060c0033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c80636f307dc314602d575b600080fd5b6033605f565b604051808273ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b60008054906101000a900473ffffffffffffffffffffffffffffffffffffffff168156fea26469706673582212208b9305cd25a68581c4a1eca1183b3842a300bdf5ea851c3a996b0cd103e66ca664736f6c634300060c0033",
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.12+commit.27d51765.Emscripten.clang",
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "evmVersion": "istanbul"
+  }
+}

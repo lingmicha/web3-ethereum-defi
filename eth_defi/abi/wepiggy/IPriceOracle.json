@@ -1,0 +1,188 @@
+{
+  "fileName": "IPriceOracle.sol",
+  "contractName": "IPriceOracle",
+  "source": "// COPIED FROM https://github.com/compound-finance/compound-protocol/blob/master/contracts/PriceOracle.sol\n//Copyright 2020 Compound Labs, Inc.\n//Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:\n//1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.\n//2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.\n//3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.\n//THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\n// SPDX-License-Identifier: MIT\npragma solidity ^0.6.0;\n\nimport \"../token/PToken.sol\";\n\ninterface IPriceOracle {\n    /**\n     * @notice Get the underlying price of a asset\n     * @param _pToken The asset to get the underlying price of\n     * @return The underlying asset price.\n     *  Zero means the price is unavailable.\n     */\n    function getUnderlyingPrice(PToken _pToken) external view returns (uint);\n}\n",
+  "sourcePath": "contracts/oracle/IPriceOracle.sol",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract PToken",
+          "name": "_pToken",
+          "type": "address"
+        }
+      ],
+      "name": "getUnderlyingPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "ast": {
+    "absolutePath": "contracts/oracle/IPriceOracle.sol",
+    "exportedSymbols": {
+      "IPriceOracle": [
+        16213
+      ]
+    },
+    "id": 16214,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 16203,
+        "literals": [
+          "solidity",
+          "^",
+          "0.6",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "1611:23:43"
+      },
+      {
+        "absolutePath": "contracts/token/PToken.sol",
+        "file": "../token/PToken.sol",
+        "id": 16204,
+        "nodeType": "ImportDirective",
+        "scope": 16214,
+        "sourceUnit": 25171,
+        "src": "1636:29:43",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 16213,
+        "linearizedBaseContracts": [
+          16213
+        ],
+        "name": "IPriceOracle",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": {
+              "id": 16205,
+              "nodeType": "StructuredDocumentation",
+              "src": "1696:213:43",
+              "text": " @notice Get the underlying price of a asset\n @param _pToken The asset to get the underlying price of\n @return The underlying asset price.\n  Zero means the price is unavailable."
+            },
+            "functionSelector": "fc57d4df",
+            "id": 16212,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getUnderlyingPrice",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 16208,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 16207,
+                  "mutability": "mutable",
+                  "name": "_pToken",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 16212,
+                  "src": "1942:14:43",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PToken_$25170",
+                    "typeString": "contract PToken"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 16206,
+                    "name": "PToken",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 25170,
+                    "src": "1942:6:43",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PToken_$25170",
+                      "typeString": "contract PToken"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1941:16:43"
+            },
+            "returnParameters": {
+              "id": 16211,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 16210,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 16212,
+                  "src": "1981:4:43",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 16209,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1981:4:43",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1980:6:43"
+            },
+            "scope": 16213,
+            "src": "1914:73:43",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 16214,
+        "src": "1667:322:43"
+      }
+    ],
+    "src": "1611:379:43"
+  },
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.12+commit.27d51765.Emscripten.clang",
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "evmVersion": "istanbul"
+  }
+}
