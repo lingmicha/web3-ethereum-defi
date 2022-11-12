@@ -64,7 +64,7 @@ def get_borrow_balance(web3: Web3, lending_token : LendingToken, account_address
     return Decimal(result) / ulyToken_decimals
 
 
-def venus_deposit(web3: Web3, hot_wallet: HotWallet, lending_token: LendingToken, deposit_amount: Decimal) -> bool:
+def deposit(web3: Web3, hot_wallet: HotWallet, lending_token: LendingToken, deposit_amount: Decimal) -> bool:
 
     venus_contract = get_deployed_contract(web3, lending_token.fname, lending_token.deposit_address)
     gas_fees = estimate_gas_fees(web3)
@@ -142,5 +142,5 @@ def venus_deposit(web3: Web3, hot_wallet: HotWallet, lending_token: LendingToken
     return True
 
 
-def venus_withdraw(web3: Web3, lending_token: LendingToken, account_address: str, withdraw_amount: float) -> bool:
+def withdraw(web3: Web3, lending_token: LendingToken, account_address: str, withdraw_amount: float) -> bool:
     pass

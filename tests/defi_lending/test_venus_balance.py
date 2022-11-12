@@ -40,11 +40,14 @@ from eth_defi.hotwallet import HotWallet
 from eth_defi.token import fetch_erc20_details
 from eth_defi.ganache import fork_network
 from eth_defi.confirmation import wait_transactions_to_complete
-from eth_defi.venus.constants import VenusToken, VENUS_NETWORKS, venus_get_network_by_chain_id
-from eth_defi.venus.balances import venus_get_deposit_balance, \
-    venus_get_borrow_balance, venus_get_exchange_rate, venus_get_venus_token_balance,\
-    venus_deposit
-
+from eth_defi.defi_lending.constants import VenusToken, LENDING_MARKETS, get_lending_market
+from eth_defi.defi_lending.balances import(
+    get_deposit_balance,
+    get_borrow_balance,
+    get_exchange_rate,
+    get_lending_token_balance,
+    deposit,
+)
 from web3.middleware import construct_sign_and_send_raw_middleware
 
 
@@ -132,21 +135,21 @@ def hot_wallet(web3, hot_wallet_private_key) -> HotWallet:
 
 @pytest.fixture(scope="module")
 def venus_busd_token() -> VenusToken:
-    venus_network = venus_get_network_by_chain_id(56)
+    venus_network = get_lending_market(56, 'venus')
     venus_token = venus_network.token_contracts['BUSD']
     return venus_token
 
 
 @pytest.fixture(scope="module")
 def venus_wbnb_token() -> VenusToken:
-    venus_network = venus_get_network_by_chain_id(56)
+    venus_network = get_lending_market(56, 'venus')
     venus_token = venus_network.token_contracts['WBNB']
     return venus_token
 
 
 @pytest.fixture(scope="module")
 def venus_usdt_token() -> VenusToken:
-    venus_network = venus_get_network_by_chain_id(56)
+    venus_network = get_lending_market(56, 'venus')
     venus_token = venus_network.token_contracts['USDT']
     return venus_token
 
@@ -174,14 +177,14 @@ def web3(ganache_bnb_chain_fork: str):
 
 def test_get_busd_exchange_rate(web3: Web3, venus_busd_token: VenusToken):
     expected_exchange_rate = Decimal(216984931.17271517901891039)
-    exchange_rate = venus_get_exchange_rate(web3, venus_busd_token)
+    exchange_rate = get_exchange_rate(web3, venus_busd_token)
     logger.debug("vBUSD exchange rate: {}".format(exchange_rate))
     assert exchange_rate == pytest.approx(expected_exchange_rate, rel=Decimal(1e-3)), "VBUSD的exchange rate应为 216984931.17271517901891039"
 
 
 def test_zero_busd_deposit_balance(web3: Web3, venus_busd_token: VenusToken, holder_1: HexAddress):
     # 0 balance
-    balance = venus_get_deposit_balance(web3, venus_busd_token, holder_1)
+    balance = get_deposit_balance(web3, venus_busd_token, holder_1)
     logger.debug("0 vBUSD holder balance: {}".format(balance))
     assert balance == Decimal(0), "账户中VBUSD价值应为 0"
 
@@ -189,7 +192,7 @@ def test_zero_busd_deposit_balance(web3: Web3, venus_busd_token: VenusToken, hol
 def test_large_busd_deposit_balance(web3: Web3, venus_busd_token: VenusToken, holder_2: HexAddress):
     # large busd balance
     expected_busd_balance = Decimal(8450783.286225)
-    balance = venus_get_deposit_balance(web3, venus_busd_token, holder_2)
+    balance = get_deposit_balance(web3, venus_busd_token, holder_2)
     logger.debug("Large vBUSD holder balance: {}, expected balance: {}".format(balance, expected_busd_balance))
     assert balance == pytest.approx(expected_busd_balance, rel=Decimal(1e-3)), "账户中VBUSD价值应为 8450783.286225"
 
@@ -197,19 +200,19 @@ def test_large_busd_deposit_balance(web3: Web3, venus_busd_token: VenusToken, ho
 def test_large_wbnb_deposit_balance(web3: Web3, venus_wbnb_token: VenusToken, holder_3: HexAddress):
     # large wbnb balance
     expected_wbnb_balance = Decimal(80354.860453789838412348)
-    balance = venus_get_deposit_balance(web3, venus_wbnb_token, holder_3)
+    balance = get_deposit_balance(web3, venus_wbnb_token, holder_3)
     logger.debug("Large WBNB holder balance: {}, expected balance: {}".format(balance, expected_wbnb_balance))
     assert balance == pytest.approx(expected_wbnb_balance, rel=Decimal(1e-3)), "账户中VBUSD价值应为 80354.860453789838412348"
 
     # 用exchange rate重新计算balance
-    exchange_rate = venus_get_exchange_rate(web3, venus_wbnb_token)
-    vwbnb_balance = venus_get_venus_token_balance(web3, venus_wbnb_token, holder_3)
+    exchange_rate = get_exchange_rate(web3, venus_wbnb_token)
+    vwbnb_balance = get_lending_token_balance(web3, venus_wbnb_token, holder_3)
     assert exchange_rate * vwbnb_balance / Decimal(10**10) == pytest.approx(expected_wbnb_balance, rel=Decimal(1e-3))
 
 
 def test_zero_busd_borrow_balance(web3: Web3, venus_busd_token: VenusToken, holder_1: HexAddress):
     # 0 balance
-    balance = venus_get_borrow_balance(web3, venus_busd_token, holder_1)
+    balance = get_borrow_balance(web3, venus_busd_token, holder_1)
     logger.debug("0 BUSD borrow balance: {}".format(balance))
     assert balance == Decimal(0), "账户中BUSD借款价值应为 0"
 
@@ -217,7 +220,7 @@ def test_zero_busd_borrow_balance(web3: Web3, venus_busd_token: VenusToken, hold
 def test_non_zero_usdt_borrow_balance(web3: Web3, venus_usdt_token: VenusToken, holder_4: HexAddress):
     # non-zero usdt borrow balance
     expected_usdt_balance = Decimal(2202.89)
-    balance = venus_get_borrow_balance(web3, venus_usdt_token, holder_4)
+    balance = get_borrow_balance(web3, venus_usdt_token, holder_4)
     logger.debug("non-zero USDT borrow balance: {}, expected balance: {}".format(balance, expected_usdt_balance))
     assert balance == pytest.approx(expected_usdt_balance, rel=Decimal(1e-3)), "账户中USDT价值应为 2202.89"
 
@@ -238,7 +241,7 @@ def test_deposit_busd_not_enough_balance(web3: Web3, venus_busd_token: VenusToke
     assert web3.eth.get_balance(hot_wallet.address) == 1_000_000_000_000_000_000, "转入的BNB数量不正确"
 
     # 1.测试结余不够
-    ret = venus_deposit(web3, hot_wallet, venus_busd_token, 1)
+    ret = deposit(web3, hot_wallet, venus_busd_token, 1)
     assert ret == False, "账户BUSD结余不够时应失败"
 
 
@@ -272,10 +275,10 @@ def test_deposit_busd_not_enough_allowance(web3: Web3, venus_busd_token: VenusTo
     busd_balance = busd.functions.balanceOf(hot_wallet.address).call()
     assert busd_balance == 50 * 10 ** 18, "BUSD 余额应等于转入的数量50"
 
-    ret = venus_deposit(web3, hot_wallet, venus_busd_token, 1)
+    ret = deposit(web3, hot_wallet, venus_busd_token, 1)
     assert ret == True, "成功存入时应返回True"
 
-    vbusd_balance = venus_get_deposit_balance(web3, venus_busd_token, hot_wallet.address)
+    vbusd_balance = get_deposit_balance(web3, venus_busd_token, hot_wallet.address)
     assert vbusd_balance == pytest.approx(Decimal(1), rel=Decimal(1e-5)), "存入的BUSD余额应等于50"
 
 
@@ -304,10 +307,10 @@ def test_deposit_busd(web3: Web3, venus_busd_token: VenusToken, hot_wallet: HotW
     busd_balance = busd.functions.balanceOf(hot_wallet.address).call()
     assert busd_balance == 50 * 10 ** 18, "BUSD 余额应等于转入的数量50"
 
-    ret = venus_deposit(web3, hot_wallet, venus_busd_token, 1)
+    ret = deposit(web3, hot_wallet, venus_busd_token, 1)
     assert ret == True, "成功存入时应返回True"
 
-    vbusd_balance = venus_get_deposit_balance(web3, venus_busd_token, hot_wallet.address)
+    vbusd_balance = get_deposit_balance(web3, venus_busd_token, hot_wallet.address)
     assert vbusd_balance == pytest.approx(Decimal(1), rel=Decimal(1e-5)), "存入的BUSD余额应等于50"
 
 
@@ -325,7 +328,7 @@ def test_deposit_bnb_not_enough_balance(web3: Web3, venus_wbnb_token: VenusToken
         assert receipt.status == 1  # tx success
     assert web3.eth.get_balance(hot_wallet.address) == 1_000_000_000_000_000_000, "转入的BNB数量不正确"
 
-    ret = venus_deposit(web3, hot_wallet, venus_wbnb_token, 2) # BNB不足
+    ret = deposit(web3, hot_wallet, venus_wbnb_token, 2) # BNB不足
     assert ret == False, "余额不足应返回False"
 
 
@@ -343,6 +346,6 @@ def test_deposit_bnb(web3: Web3, venus_wbnb_token: VenusToken, hot_wallet: HotWa
         assert receipt.status == 1  # tx success
     assert web3.eth.get_balance(hot_wallet.address) == 2_000_000_000_000_000_000, "转入的BNB数量不正确"
 
-    ret = venus_deposit(web3, hot_wallet, venus_wbnb_token, 1)
+    ret = deposit(web3, hot_wallet, venus_wbnb_token, 1)
     assert ret == True, "存入成功应返回Ture"
 
