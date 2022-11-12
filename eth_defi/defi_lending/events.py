@@ -11,23 +11,27 @@ from retry import retry
 from web3 import Web3, exceptions
 from requests.adapters import HTTPAdapter
 
-from eth_defi.abi import get_deployed_contract
+from eth_defi.abi import(
+    get_contract,
+    get_deployed_contract,
+)
 from eth_defi.event_reader.conversion import (
     decode_data,
     convert_int256_bytes_to_int,
 )
 
 from eth_defi.token import TokenDetails, fetch_erc20_details
-from eth_defi.abi import get_contract
-
 from eth_defi.event_reader.logresult import LogContext
 from eth_defi.event_reader.reader import LogResult, prepare_filter, read_events_concurrent, extract_timestamps_json_rpc
 from eth_defi.event_reader.web3factory import TunedWeb3Factory
 from eth_defi.event_reader.web3worker import create_thread_pool_executor
 from eth_defi.event_reader.state import ScanState
 
-from eth_defi.venus.constants import venus_get_token_name_by_deposit_address, VENUS_NETWORKS
-
+from eth_defi.defi_lending.constants import (
+    LENDING_MARKETS,
+    get_lending_market,
+    get_token_name_by_deposit_address,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +73,9 @@ def decode_accrue_interest_events(log: LogResult) -> dict:
     # Any indexed Solidity event parameter will be in topics data.
     # The first topics (0) is always the event signature.
     deposit_address = Web3.toChecksumAddress(log["address"])
-    token_name = venus_get_token_name_by_deposit_address(deposit_address)
+    token_name = get_token_name_by_deposit_address(deposit_address)
+
+    #TODO: fname according to different protocols
     contract = get_deployed_contract(web3, "venus/VBep20.json", deposit_address)
 
     # Chop data blob to byte32 entries
@@ -111,7 +117,7 @@ def decode_accrue_interest_events(log: LogResult) -> dict:
     return data
 
 
-def get_event_mapping(web3: Web3) -> dict:
+def get_event_mapping(web3: Web3, protocol: str ="venus") -> dict:
     """Returns tracked event types and mapping.
 
     Currently we are tracking these events:
@@ -119,11 +125,18 @@ def get_event_mapping(web3: Web3) -> dict:
     """
 
     # Get contracts
-    venus_token = get_contract(web3, 'venus/VBep20.json')
+    if protocol.lower() == 'venus':
+        fname = 'venus/VBep20.json'
+    elif protocol.lower() == 'wepiggy':
+        fname = 'wepiggy/PToken.json'
+    else:
+        raise AttributeError("protocol name not valid: {}".format(protocol))
+
+    token = get_contract(web3, fname)
 
     return {
         "AccrueInterest": {
-            "contract_event": venus_token.events.AccrueInterest,
+            "contract_event": token.events.AccrueInterest,
             "field_names": [
                 "block_number",
                 "timestamp",
@@ -147,6 +160,8 @@ def get_event_mapping(web3: Web3) -> dict:
 
 def fetch_events_to_csv(
     json_rpc_url: str,
+    chain_id: int,
+    protocol: str,
     state: ScanState,
     start_block: int = 12_766_328, # TRX created
     end_block: int = 12_766_328 + 1_000,
@@ -182,12 +197,13 @@ def fetch_events_to_csv(
         and see how your node performs.
     :param log_info: Which function to use to output info messages about the progress
     """
+    market = get_lending_market(chain_id, protocol)
     token_cache = TokenCache()
     http_adapter = HTTPAdapter(pool_connections=max_workers, pool_maxsize=max_workers)
     web3_factory = TunedWeb3Factory(json_rpc_url, http_adapter)
     web3 = web3_factory(token_cache)
     executor = create_thread_pool_executor(web3_factory, token_cache, max_workers=max_workers)
-    event_mapping = get_event_mapping(web3)
+    event_mapping = get_event_mapping(web3, protocol)
     contract_events = [event_data["contract_event"] for event_data in event_mapping.values()]
 
     # Make sure output folder exists
@@ -209,7 +225,7 @@ def fetch_events_to_csv(
     buffers = {}
 
     for event_name, mapping in event_mapping.items():
-        file_path = f"{output_folder}/venus-{event_name.lower()}.csv"
+        file_path = f"{output_folder}/{protocol.lower()}-{event_name.lower()}.csv"
         exists_already = Path(file_path).exists()
         file_handler = open(file_path, "a", encoding="utf-8")
         csv_writer = csv.DictWriter(file_handler, fieldnames=mapping["field_names"])
@@ -266,7 +282,7 @@ def fetch_events_to_csv(
             state.save_state(current_block)
 
         # Prepare filter so that only vtoken address are monitored
-        addresses = [t.deposit_address for t in VENUS_NETWORKS['bsc'].token_contracts.values()]
+        addresses = [t.deposit_address for t in market.token_contracts.values()]
         flter = prepare_filter(contract_events)
         flter.contract_address = addresses
 
@@ -300,6 +316,8 @@ def fetch_events_to_csv(
 
 def fetch_events_to_dataframe(
     json_rpc_url: str,
+    chain_id: int,
+    protocol: str,
     state: ScanState,
     start_block: int = 12_766_328, # TRX created
     end_block: int = 12_766_328 + 1_000,
@@ -312,14 +330,14 @@ def fetch_events_to_dataframe(
     :return:
     '''
 
-    fetch_events_to_csv(json_rpc_url,state,start_block,end_block,output_folder,max_workers,log_info,)
+    fetch_events_to_csv(json_rpc_url,chain_id, protocol,  state, start_block, end_block, output_folder, max_workers, log_info,)
 
     restored, restored_block = state.restore_state(start_block)
     assert restored, "ScanState not restored!"
     assert restored_block >= end_block, "Scan not finished"
 
     event_name = "accrueInterest"
-    file_path = f"{output_folder}/venus-{event_name.lower()}.csv"
+    file_path = f"{output_folder}/{protocol.lower()}-{event_name.lower()}.csv"
     assert Path(file_path).exists(), "Scanned Event CSV file {} not found!".format(file_path)
 
     df = pandas.read_csv(file_path, parse_dates=True, index_col="timestamp")
