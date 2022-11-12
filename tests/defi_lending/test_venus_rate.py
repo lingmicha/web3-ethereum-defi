@@ -204,15 +204,19 @@ def test_rates_between_events(web3:Web3, venus_busd_token: LendingToken):
 
 def test_venus_calculate_mean_return(web3:Web3, venus_wbnb_token: LendingToken):
     json_rpc_url = os.environ["BNB_CHAIN_JSON_RPC"]
+    file_path = os.path.realpath(os.path.dirname(__file__))
+    sub_path = "rates"
+    full_path = f"{file_path}/{sub_path}"
+    scanstate = f"{full_path}/venus_scanstate.log"
 
     start_block = 22629320 #
     end_block = 22639420 #
 
-    df = fetch_events_to_dataframe(json_rpc_url,
-                        JSONFileScanState("/tmp/test_venus_calculate_mean_return/scanstate.log"),
+    df = fetch_events_to_dataframe(json_rpc_url, 56, 'venus',
+                        JSONFileScanState(scanstate),
                         start_block=start_block,
                         end_block=end_block,
-                        output_folder="/tmp/test_venus_calculate_mean_return")
+                        output_folder=full_path)
 
     assert len(df) == 680
     assert df.iloc[0]['block_number'] == 22629321
@@ -233,16 +237,20 @@ def test_venus_calculate_mean_return(web3:Web3, venus_wbnb_token: LendingToken):
 def test_venus_calculate_accrued_interests(venus_wbnb_token: LendingToken):
 
     json_rpc_url = os.environ["BNB_CHAIN_JSON_RPC"]
+    file_path = os.path.realpath(os.path.dirname(__file__))
+    sub_path = "rates"
+    full_path = f"{file_path}/{sub_path}"
+    scanstate = f"{full_path}/venus_scanstate.log"
 
     start_block = 22629320  #
     end_block = 22639420  #
     amount = Decimal(100)
 
-    df = fetch_events_to_dataframe(json_rpc_url,
-                                   JSONFileScanState("/tmp/test_venus_calculate_mean_return/scanstate.log"),
+    df = fetch_events_to_dataframe(json_rpc_url, 56, 'venus',
+                                   JSONFileScanState(scanstate),
                                    start_block=start_block,
                                    end_block=end_block,
-                                   output_folder="/tmp/test_venus_calculate_mean_return")
+                                   output_folder=full_path)
 
     interest = get_current_rates(df,
                                      datetime.datetime(2022,10,30,17,43,9),
