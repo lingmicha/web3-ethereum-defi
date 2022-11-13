@@ -1,33 +1,30 @@
-# About Venus
+# About Compound V2
 
-此文档用来解释Venus的工作原理，以及我们如何利用`AccrueInterest`事件来追踪利率变化。
+此文档用来解释Compound V2的工作原理，以及我们如何利用`AccrueInterest`事件来追踪利率变化。
+这一原理应该适用于fork Compound V2的所有协议，包括现在支持的venus和WePiggy。
+此处我们以Venus为例。
 
 ## Venus Market
-目前的Venus Market: 
-* SXP
-* USDC
-* USDT
-* BUSD
-* XVS
-* BTC
-* ETH
-* LTC
-* XRP
-* WBNB
-* BCH
-* DOT
-* LINK
-* DAI
-* FIL
-* BETH
-* CAN
-* ADA
-* DOGE
-* MATIC
-* CAKE
-* AAVE
-* TUSD
-* TRX
+目前的Venus Market:
+
+|Token|Token|Token|Token|
+|-----|-----|-----|-----|
+|SXP|USDC|USDT|BUSD|
+|XVS|BTC|ETH|LTC|
+|XRP|WBNB|BCH|DOT|
+|LINK|DAI|FIL|BETH|
+|CAN|ADA|DOGE|MATIC|
+|CAKE|AAVE|TUSD|TRX|
+
+## WePiggy Market
+WePiggy Market:
+
+|Token|Token|Token|Token|
+|-----|-----|-----|-----|
+|WBNB|USDC|USDT|BUSD|
+|DAI|ETH|BTCB|LTC|
+|XRP|WBNB|BCH|DOT|
+|CAKE|ADA|FIL|LTC|
 
 ## Venus AccrueInterest Event
 
