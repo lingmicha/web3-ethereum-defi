@@ -3,6 +3,7 @@ Functions for reading Venus account status.
 """
 import logging
 from decimal import Decimal
+from typing import Union
 
 from web3 import Web3
 from eth_defi.abi import get_deployed_contract
@@ -23,19 +24,19 @@ def get_exchange_rate(web3: Web3, lending_token: LendingToken) -> Decimal:
     :param lending_token:
     """
 
-    contract = get_deployed_contract(web3, lending_token.fname, lending_token.deposit_address)
+    contract = get_deployed_contract(web3, lending_token.abi, lending_token.deposit_address)
     result = contract.functions.exchangeRateCurrent().call()
     return Decimal(result) / WAD
 
 
 def get_lending_token_balance(web3: Web3, lending_token: LendingToken, account_address: str) -> Decimal:
 
-    contract = get_deployed_contract(web3, lending_token.fname, lending_token.deposit_address)
+    contract = get_deployed_contract(web3, lending_token.abi, lending_token.deposit_address)
     result = contract.functions.balanceOf(account_address).call()
     return Decimal(result) / lending_token_decimals
 
 
-def get_deposit_balance(web3: Web3, lending_token: LendingToken, account_address: str) -> Decimal:
+def get_deposit_balance(web3: Web3, lending_token: LendingToken, account_address: str, block_number:Union[str, int]='latest') -> Decimal:
     """Check the underlying depositing token balance
 
     :param web3:
@@ -44,12 +45,12 @@ def get_deposit_balance(web3: Web3, lending_token: LendingToken, account_address
     :return:
     """
     # Use the vToken contract to read the account's current deposit balance in the specified currency reserve
-    contract = get_deployed_contract(web3, lending_token.fname, lending_token.deposit_address)
-    result = contract.functions.balanceOfUnderlying(account_address).call()
+    contract = get_deployed_contract(web3, lending_token.abi, lending_token.deposit_address)
+    result = contract.functions.balanceOfUnderlying(account_address).call(block_identifier=block_number)
     return Decimal(result) / ulyToken_decimals
 
 
-def get_borrow_balance(web3: Web3, lending_token : LendingToken, account_address: str) -> Decimal:
+def get_borrow_balance(web3: Web3, lending_token: LendingToken, account_address: str, block_number:Union[str, int]='latest') -> Decimal:
     """Check the underlying borrowing token balance
 
     :param web3:
@@ -59,14 +60,14 @@ def get_borrow_balance(web3: Web3, lending_token : LendingToken, account_address
     """
     # Use the vToken contract to read the account's current borrow balance in the specified currency reserve
     deposit_address = Web3.toChecksumAddress(lending_token.deposit_address)
-    contract = get_deployed_contract(web3, lending_token.fname, deposit_address)
-    result = contract.functions.borrowBalanceCurrent(account_address).call()
+    contract = get_deployed_contract(web3, lending_token.abi, deposit_address)
+    result = contract.functions.borrowBalanceCurrent(account_address).call(block_identifier=block_number)
     return Decimal(result) / ulyToken_decimals
 
 
 def deposit(web3: Web3, hot_wallet: HotWallet, lending_token: LendingToken, deposit_amount: Decimal) -> bool:
 
-    venus_contract = get_deployed_contract(web3, lending_token.fname, lending_token.deposit_address)
+    venus_contract = get_deployed_contract(web3, lending_token.abi, lending_token.deposit_address)
     gas_fees = estimate_gas_fees(web3)
 
     # 区分是否是wbnb

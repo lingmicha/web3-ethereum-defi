@@ -24,7 +24,7 @@ from eth_defi.defi_lending.constants import(
     LENDING_MARKETS
 )
 from eth_defi.defi_lending.events import (
-    TokenCache,
+    MarketCache,
     decode_accrue_interest_events,
     fetch_events_to_dataframe
 )
@@ -90,7 +90,7 @@ def test_calc_rates_using_index(web3:Web3, venus_wbnb_token: LendingToken):
     flter = prepare_filter(events)
     flter.contract_address = addresses
 
-    token_cache = TokenCache()
+    token_cache = MarketCache(56, 'venus')
 
     start_block = 22629321
     end_block = 22629324    #
@@ -137,7 +137,7 @@ def test_calc_rates_using_index(web3:Web3, venus_wbnb_token: LendingToken):
     borrow_rate_on_chain = vbnb.functions.borrowRatePerBlock().call(block_identifier=22629320) / 1e18
     assert borrow_rate_calculated == pytest.approx(borrow_rate_on_chain, 1e-10)
 
-
+@pytest.mark.skip(msg="测试过稳定，除非验证概念，否则可以不用测试")
 def test_rates_between_events(web3:Web3, venus_busd_token: LendingToken):
     """测试events之间应该保持稳定的量：
         borrowRatePerBlock
@@ -209,8 +209,8 @@ def test_venus_calculate_mean_return(web3:Web3, venus_wbnb_token: LendingToken):
     full_path = f"{file_path}/{sub_path}"
     scanstate = f"{full_path}/venus_scanstate.log"
 
-    start_block = 22629320 #
-    end_block = 22639420 #
+    start_block = 22629320
+    end_block = 22639420
 
     df = fetch_events_to_dataframe(json_rpc_url, 56, 'venus',
                         JSONFileScanState(scanstate),

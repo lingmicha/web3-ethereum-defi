@@ -28,28 +28,28 @@ from eth_defi.event_reader.web3worker import create_thread_pool_executor
 from eth_defi.event_reader.state import ScanState
 
 from eth_defi.defi_lending.constants import (
-    LENDING_MARKETS,
     get_lending_market,
     get_token_name_by_deposit_address,
+    LendingToken,
 )
 
 logger = logging.getLogger(__name__)
 
 
-class TokenCache(LogContext):
-    """Manage cache of token data when doing PairCreated look-up.
+class MarketCache(LogContext):
+    """Manage cache of lending market data when doing event AccrueInterest look-up.
 
     Do not do extra requests for already known tokens.
     """
 
-    def __init__(self):
-        self.cache = {}
+    def __init__(self, chain_id: int, protocol: str):
+        self.cache = get_lending_market(chain_id, protocol)
 
-    def get_token_info(self, web3: Web3, address: str) -> TokenDetails:
-        if address not in self.cache:
-            self.cache[address] = fetch_erc20_details(web3, address, raise_on_error=False)
-        return self.cache[address]
+    def get_token_info(self, token_name: str) -> LendingToken:
+        return self.cache.token_contracts[token_name.upper()]
 
+    def get_abi_path(self) -> str:
+        return self.cache.abi
 
 @retry(exceptions.BadFunctionCallOutput, tries=5, delay=2, backoff=2)
 def decode_accrue_interest_events(log: LogResult) -> dict:
@@ -66,7 +66,7 @@ def decode_accrue_interest_events(log: LogResult) -> dict:
 
     # Do additional lookup for the token data
     web3 = log["event"].web3
-    token_cache: TokenCache = log["context"]
+    market_cache: MarketCache = log["context"]
     block_time = datetime.datetime.utcfromtimestamp(log["timestamp"])
     block_number = int(log["blockNumber"], 16)
 
@@ -75,16 +75,12 @@ def decode_accrue_interest_events(log: LogResult) -> dict:
     deposit_address = Web3.toChecksumAddress(log["address"])
     token_name = get_token_name_by_deposit_address(deposit_address)
 
-    #TODO: fname according to different protocols
-    contract = get_deployed_contract(web3, "venus/VBep20.json", deposit_address)
+    contract = get_deployed_contract(web3, market_cache.get_abi_path(), deposit_address)
 
     # Chop data blob to byte32 entries
     data_entries = decode_data(log["data"])
-
-    #cash_prior = convert_int256_bytes_to_int(data_entries[0])
-    #interest_accumulated = convert_int256_bytes_to_int(data_entries[1])
+    # Wepiggy 和 Venus 参数不同，但是[2]都是borrow index， Wepiggy在最后加了一个totalReserves
     borrow_index = convert_int256_bytes_to_int(data_entries[2])
-    #total_borrows = convert_int256_bytes_to_int(data_entries[3])
 
     # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
     borrow_rate_per_block = contract.functions.borrowRatePerBlock().call(block_identifier=block_number)
@@ -117,22 +113,19 @@ def decode_accrue_interest_events(log: LogResult) -> dict:
     return data
 
 
-def get_event_mapping(web3: Web3, protocol: str ="venus") -> dict:
+def get_event_mapping(web3: Web3, chain_id: int, protocol: str) -> dict:
     """Returns tracked event types and mapping.
 
     Currently we are tracking these events:
+        Venus:
         event AccrueInterest(uint256,uint256,uint256,uint256);
+
+        WePiggy:
+        event AccrueInterest(uint256,uint256,uint256,uint256,uint256);
     """
 
-    # Get contracts
-    if protocol.lower() == 'venus':
-        fname = 'venus/VBep20.json'
-    elif protocol.lower() == 'wepiggy':
-        fname = 'wepiggy/PToken.json'
-    else:
-        raise AttributeError("protocol name not valid: {}".format(protocol))
-
-    token = get_contract(web3, fname)
+    market = get_lending_market(chain_id, protocol)
+    token = get_contract(web3, market.abi)
 
     return {
         "AccrueInterest": {
@@ -198,12 +191,12 @@ def fetch_events_to_csv(
     :param log_info: Which function to use to output info messages about the progress
     """
     market = get_lending_market(chain_id, protocol)
-    token_cache = TokenCache()
+    market_cache = MarketCache(chain_id, protocol)
     http_adapter = HTTPAdapter(pool_connections=max_workers, pool_maxsize=max_workers)
     web3_factory = TunedWeb3Factory(json_rpc_url, http_adapter)
-    web3 = web3_factory(token_cache)
-    executor = create_thread_pool_executor(web3_factory, token_cache, max_workers=max_workers)
-    event_mapping = get_event_mapping(web3, protocol)
+    web3 = web3_factory(market_cache)
+    executor = create_thread_pool_executor(web3_factory, market_cache, max_workers=max_workers)
+    event_mapping = get_event_mapping(web3, chain_id, protocol)
     contract_events = [event_data["contract_event"] for event_data in event_mapping.values()]
 
     # Make sure output folder exists
@@ -252,7 +245,7 @@ def fetch_events_to_csv(
             chunk_size: int,
             total_events: int,
             last_timestamp: int,
-            context: TokenCache,
+            context: MarketCache,
         ):
             nonlocal buffers
 
@@ -294,7 +287,7 @@ def fetch_events_to_csv(
             events=contract_events,
             notify=update_progress,
             chunk_size=100,
-            context=token_cache,
+            context=market_cache,
             filter=flter,
             extract_timestamps=extract_timestamps_json_rpc,
         ):
@@ -330,7 +323,7 @@ def fetch_events_to_dataframe(
     :return:
     '''
 
-    fetch_events_to_csv(json_rpc_url,chain_id, protocol,  state, start_block, end_block, output_folder, max_workers, log_info,)
+    fetch_events_to_csv(json_rpc_url, chain_id, protocol,  state, start_block, end_block, output_folder, max_workers, log_info,)
 
     restored, restored_block = state.restore_state(start_block)
     assert restored, "ScanState not restored!"

@@ -112,7 +112,7 @@ def test_jump_model_calculation(web3: Web3):
     # BUSD: JUMP MODEL
     venus_token = network.token_contracts['BUSD'] # JumpRateModel
     model = venus_token.model
-    contract = get_deployed_contract(web3, venus_token.fname, venus_token.deposit_address)
+    contract = get_deployed_contract(web3, venus_token.abi, venus_token.deposit_address)
 
     # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
     borrow_rate_per_block = contract.functions.borrowRatePerBlock().call(block_identifier=block_number) # 2957813543
@@ -157,7 +157,7 @@ def test_simple_model_calculation(web3: Web3):
     # XVS: SIMPLE MODEL
     venus_token = network.token_contracts['XVS'] # JumpRateModel
     model = venus_token.model
-    contract = get_deployed_contract(web3, venus_token.fname, venus_token.deposit_address)
+    contract = get_deployed_contract(web3, venus_token.abi, venus_token.deposit_address)
 
     # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
     borrow_rate_per_block = contract.functions.borrowRatePerBlock().call(block_identifier=block_number) # 2957813543
@@ -202,7 +202,7 @@ def test_wepiggy_jump_model_calculation(web3: Web3):
     # BUSD: JUMP MODEL
     venus_token = network.token_contracts['BUSD'] # JumpRateModel
     model = venus_token.model
-    contract = get_deployed_contract(web3, venus_token.fname, venus_token.deposit_address)
+    contract = get_deployed_contract(web3, venus_token.abi, venus_token.deposit_address)
 
     # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
     borrow_rate_per_block = contract.functions.borrowRatePerBlock().call(block_identifier=block_number) # 2957813543
@@ -246,7 +246,7 @@ def test_wepiggy_dai_model_calculation(web3: Web3):
     # BUSD: JUMP MODEL
     venus_token = network.token_contracts['DAI'] # JumpRateModel
     model = venus_token.model
-    contract = get_deployed_contract(web3, venus_token.fname, venus_token.deposit_address)
+    contract = get_deployed_contract(web3, venus_token.abi, venus_token.deposit_address)
 
     # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
     borrow_rate_per_block = contract.functions.borrowRatePerBlock().call(block_identifier=block_number) # 2957813543

@@ -51,7 +51,7 @@ SECONDS_PER_YEAR = Decimal(SECONDS_PER_YEAR_INT)
 
 def get_interest_model_parameters(web3: Web3, lending_token: LendingToken) -> InterestModelParameters:
 
-    contract = get_deployed_contract(web3, lending_token.fname, lending_token.deposit_address)
+    contract = get_deployed_contract(web3, lending_token.abi, lending_token.deposit_address)
 
     reserve_factor = contract.functions.reserveFactorMantissa().call()
     reserve_factor = Decimal(reserve_factor) / WAD
@@ -262,7 +262,7 @@ class MarketDepthAnalysis(NamedTuple):
 @retry(exceptions.BadFunctionCallOutput, tries=5, delay=2)
 def get_current_rates(web3: Web3, lending_token: LendingToken) -> LendingRates:
 
-    contract = get_deployed_contract(web3, lending_token.fname, lending_token.deposit_address)
+    contract = get_deployed_contract(web3, lending_token.abi, lending_token.deposit_address)
 
     # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
     borrow_rate_per_block = contract.functions.borrowRatePerBlock().call()

@@ -42,6 +42,13 @@ Venus的利率在以下5个操作时，会发生变化：
 
 我们会监控`AccrueInterest Event`来实时的跟踪利率变化。
 
+venus的AccrueInterest Event Signature:
+`AccrueInterest(uint256,uint256,uint256,uint256)`
+
+wepiggy有一个不同的Event Signature：
+`AccrueInterest(uint256,uint256,uint256,uint256,uint256)`
+
+
 ## Venus 的利率模型
 
 Venus目前有2种在用的利率模型，`WhitePaperInterestModel`和`JumpInterestModel`。

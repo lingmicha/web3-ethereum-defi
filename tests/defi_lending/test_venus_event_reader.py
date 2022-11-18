@@ -40,7 +40,7 @@ from eth_defi.defi_lending.constants import(
 )
 
 from eth_defi.defi_lending.events import (
-    TokenCache,
+    MarketCache,
     decode_accrue_interest_events,
     fetch_events_to_dataframe,
     fetch_events_to_csv,
@@ -92,7 +92,7 @@ def test_read_events(web3: Web3):
     flter = prepare_filter(events)
     flter.contract_address = addresses
 
-    token_cache = TokenCache()
+    token_cache = MarketCache(56, 'venus')
 
     start_block = 22629320
     end_block = 22629330  # 22631473  #
@@ -157,7 +157,7 @@ def test_read_wepiggy_events(web3: Web3):
     flter = prepare_filter(events)
     flter.contract_address = addresses
 
-    token_cache = TokenCache()
+    token_cache = MarketCache(56, 'wepiggy')
 
     start_block = 22958548
     end_block = 22958573
@@ -220,7 +220,7 @@ def test_read_events_failed_case_1(web3: Web3):
     flter = prepare_filter(events)
     flter.contract_address = addresses
 
-    token_cache = TokenCache()
+    token_cache = MarketCache(56, 'venus')
 
     start_block = 20500372#22159164
     end_block = 20500372#22159164  # 22631473  #
@@ -260,7 +260,7 @@ def test_read_events_concurrent():
     """Read events quickly over JSON-RPC API using a thread pool."""
 
     json_rpc_url = os.environ["BNB_CHAIN_JSON_RPC"]
-    token_cache = TokenCache()
+    token_cache = MarketCache(56, 'venus')
     threads = 2
     http_adapter = HTTPAdapter(pool_connections=threads, pool_maxsize=threads)
     web3_factory = TunedWeb3Factory(json_rpc_url, http_adapter)
