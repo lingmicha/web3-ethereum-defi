@@ -48,6 +48,10 @@ pid文档: https://github.com/pancakeswap/pancake-frontend/tree/400fde5df71d14e2
     
     但是当中间有若干次存取操作时，使用RewardDebt可能更灵活。
 
+## 存取操作产生的影响
+- 用户存取操作时，该池子里的pendingReward会被发放给用户(transfer操作),并且更新rewardDebt和accCakePerShare（针对pancake）
+- 用户Harvest时，相当于做了一个deposit，量为0
+
 
 ## How to calcualte APR for a masterchef contract
 

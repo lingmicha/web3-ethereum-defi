@@ -1,7 +1,7 @@
 '''
     Compound V2 关键概念：参见README.md
 '''
-
+import asyncio
 import os
 import logging
 import datetime
@@ -49,35 +49,37 @@ SECONDS_PER_YEAR_INT = 31_536_000
 SECONDS_PER_YEAR = Decimal(SECONDS_PER_YEAR_INT)
 
 
-def get_interest_model_parameters(web3: Web3, lending_token: LendingToken) -> InterestModelParameters:
+async def get_interest_model_parameters(web3: Web3, lending_token: LendingToken) -> InterestModelParameters:
 
     contract = get_deployed_contract(web3, lending_token.abi, lending_token.deposit_address)
 
-    reserve_factor = contract.functions.reserveFactorMantissa().call()
-    reserve_factor = Decimal(reserve_factor) / WAD
-
-    model_address = contract.functions.interestRateModel().call()
-    logger.info("model address: {}".format(model_address))
+    model_address = await contract.functions.interestRateModel().call()
+    logger.info("Interest Model Address: {}".format(model_address))
 
     # TODO: 我们先统一使用venus的abi，如果后期发现有问题，再进行优化
     if isinstance(lending_token.model, SimpleInterestModel):
-        fname = "venus/WhitePaperInterestRateModel.json"
+        abi = "venus/WhitePaperInterestRateModel.json"
     else:
-        fname = "venus/JumpRateModel.json"
+        abi = "venus/JumpRateModel.json"
+    model_contract = get_deployed_contract(web3, abi, Web3.to_checksum_address(model_address))
 
-    model_contract = get_deployed_contract(web3, fname, Web3.toChecksumAddress(model_address))
+    tasks = [contract.functions.reserveFactorMantissa().call(),
+             model_contract.functions.baseRatePerBlock().call(),
+             model_contract.functions.multiplierPerBlock().call()]
+    (reserve_factor,
+     base_rate_per_block,
+     multiplier_per_block,
+     ) = await asyncio.gather(*tasks)
 
-    base_rate_per_block = model_contract.functions.baseRatePerBlock().call()
+    reserve_factor = Decimal(reserve_factor) / WAD
     base_rate_per_block = Decimal(base_rate_per_block) / WAD
-
-    multiplier_per_block = model_contract.functions.multiplierPerBlock().call()
     multiplier_per_block = Decimal(multiplier_per_block) / WAD
 
     if isinstance(lending_token.model, JumpInterestModel):
-        kink = model_contract.functions.kink().call()
+        kink = await model_contract.functions.kink().call()
         kink = Decimal(kink) / WAD
 
-        jump_multiplier_per_block = model_contract.functions.jumpMultiplierPerBlock().call()
+        jump_multiplier_per_block = await model_contract.functions.jumpMultiplierPerBlock().call()
         jump_multiplier_per_block = Decimal(jump_multiplier_per_block) / WAD
     else:
         kink = Decimal(0)
@@ -260,24 +262,27 @@ class MarketDepthAnalysis(NamedTuple):
 
 
 @retry(exceptions.BadFunctionCallOutput, tries=5, delay=2)
-def get_current_rates(web3: Web3, lending_token: LendingToken) -> LendingRates:
+async def get_current_rates(web3: Web3, lending_token: LendingToken) -> LendingRates:
 
     contract = get_deployed_contract(web3, lending_token.abi, lending_token.deposit_address)
 
     # 监控的事件发生时，都会引起利率变化，所以要记录此区块的利率、借款、存款利息等信息
-    borrow_rate_per_block = contract.functions.borrowRatePerBlock().call()
+    tasks = [contract.functions.borrowRatePerBlock().call(),
+             contract.functions.supplyRatePerBlock().call(),
+             contract.functions.totalBorrows().call(),
+             contract.functions.totalReserves().call(),
+             contract.functions.getCash().call(),
+    ]
+    (borrow_rate_per_block,
+     supply_rate_per_block,
+     total_borrows,
+     total_reserves,
+     cash) = await asyncio.gather(*tasks)
+
     borrow_rate_per_block = Decimal(borrow_rate_per_block) / ulyToken_decimals
-
-    supply_rate_per_block = contract.functions.supplyRatePerBlock().call()
     supply_rate_per_block = Decimal(supply_rate_per_block) / ulyToken_decimals
-
-    total_borrows = contract.functions.totalBorrows().call()
     total_borrows = Decimal(total_borrows)/ulyToken_decimals
-
-    total_reserves = contract.functions.totalReserves().call()
     total_reserves = Decimal(total_reserves)/ulyToken_decimals
-
-    cash = contract.functions.getCash().call()
     cash = Decimal(cash)/ulyToken_decimals
 
     return LendingRates(

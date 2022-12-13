@@ -36,7 +36,7 @@ def get_lending_token_balance(web3: Web3, lending_token: LendingToken, account_a
     return Decimal(result) / lending_token_decimals
 
 
-def get_deposit_balance(web3: Web3, lending_token: LendingToken, account_address: str, block_number:Union[str, int]='latest') -> Decimal:
+async def get_deposit_balance(web3: Web3, lending_token: LendingToken, account_address: str, block_number:Union[str, int]='latest') -> Decimal:
     """Check the underlying depositing token balance
 
     :param web3:
@@ -46,11 +46,11 @@ def get_deposit_balance(web3: Web3, lending_token: LendingToken, account_address
     """
     # Use the vToken contract to read the account's current deposit balance in the specified currency reserve
     contract = get_deployed_contract(web3, lending_token.abi, lending_token.deposit_address)
-    result = contract.functions.balanceOfUnderlying(account_address).call(block_identifier=block_number)
+    result = await contract.functions.balanceOfUnderlying(account_address).call(block_identifier=block_number)
     return Decimal(result) / ulyToken_decimals
 
 
-def get_borrow_balance(web3: Web3, lending_token: LendingToken, account_address: str, block_number:Union[str, int]='latest') -> Decimal:
+async def get_borrow_balance(web3: Web3, lending_token: LendingToken, account_address: str, block_number:Union[str, int]='latest') -> Decimal:
     """Check the underlying borrowing token balance
 
     :param web3:
@@ -59,9 +59,9 @@ def get_borrow_balance(web3: Web3, lending_token: LendingToken, account_address:
     :return:
     """
     # Use the vToken contract to read the account's current borrow balance in the specified currency reserve
-    deposit_address = Web3.toChecksumAddress(lending_token.deposit_address)
+    deposit_address = Web3.to_checksum_address(lending_token.deposit_address)
     contract = get_deployed_contract(web3, lending_token.abi, deposit_address)
-    result = contract.functions.borrowBalanceCurrent(account_address).call(block_identifier=block_number)
+    result = await contract.functions.borrowBalanceCurrent(account_address).call(block_identifier=block_number)
     return Decimal(result) / ulyToken_decimals
 
 

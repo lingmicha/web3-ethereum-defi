@@ -66,13 +66,14 @@ def decode_accrue_interest_events(log: LogResult) -> dict:
 
     # Do additional lookup for the token data
     web3 = log["event"].web3
+
     market_cache: MarketCache = log["context"]
     block_time = datetime.datetime.utcfromtimestamp(log["timestamp"])
     block_number = int(log["blockNumber"], 16)
 
     # Any indexed Solidity event parameter will be in topics data.
     # The first topics (0) is always the event signature.
-    deposit_address = Web3.toChecksumAddress(log["address"])
+    deposit_address = Web3.to_checksum_address(log["address"])
     token_name = get_token_name_by_deposit_address(deposit_address)
 
     contract = get_deployed_contract(web3, market_cache.get_abi_path(), deposit_address)

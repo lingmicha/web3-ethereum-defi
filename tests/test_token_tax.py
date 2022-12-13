@@ -111,6 +111,7 @@ def uniswap(web3: Web3, pancakeswap_factory_v2: HexAddress, pancake_router: HexA
 
 
 # Because Ganache is such a crap and keeps randomly failing
+@pytest.mark.skip(msg="Find a better token with tax to test")
 @flaky.flaky(max_runs=5)
 def test_token_tax(uniswap: UniswapV2Deployment, large_busd_holder: HexAddress, seller: HexAddress,
                    elephant: HexAddress, busd: HexAddress):
