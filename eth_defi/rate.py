@@ -62,7 +62,7 @@ class REST_Semaphore(asyncio.Semaphore):
         super().release()
 
 
-NODE_RATE_LIMITER = REST_Semaphore(25, 1) # Default Limiter
+NODE_RATE_LIMITER = REST_Semaphore(20, 1) # Default Limiter
 
 
 async def async_rate_limiter_middleware(

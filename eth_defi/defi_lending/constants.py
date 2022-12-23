@@ -71,6 +71,7 @@ class WepiggyToken(LendingToken):
 LENDING_NETWORK_CHAINS: dict[int, str] = {
     56: 'bsc',
     66: 'oec',
+    57: 'bsc', # 测试用途
 }
 
 
